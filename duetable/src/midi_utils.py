@@ -151,10 +151,11 @@ MIDI_DATA = [
     (22, "Bb", 29.14, 0),
     (21, "A", 27.50, 0),
 ]
+
 MIDI_DATA_BY_NO = {
     midi_no: dict(
                 midi_no=midi_no,
                 freq_hz=freq,
                 name=note_name,
                 octave=octave_no,
-            ) for midi_no, note_name, freq, octave_no in _MIDI_DATA}
+            ) for midi_no, note_name, freq, octave_no in MIDI_DATA}
