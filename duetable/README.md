@@ -1,1 +1,0 @@
-# DUETable project
