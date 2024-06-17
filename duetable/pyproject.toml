@@ -4,9 +4,13 @@ version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
+packages = [{include = "src", from = "duetable"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+aubio = "^0.4.9"
+mido = "^1.3.2"
+numpy = "1.26.4"
 
 
 [build-system]
