@@ -25,7 +25,7 @@ class StreamAudioToMidiWithAub:
 
     def read(self):
         note_detector_method = "default"
-        notes_detector = aubio.notes(note_detector_method, self.win_s, self.hop_s, self.sample_rate)  # TODO try with aubio.notes
+        notes_detector = aubio.notes(note_detector_method, self.win_s, self.hop_s, self.sample_rate)  # TODO try with aubio.pitch
 
         while True:
             data = self._stream.read(self.hop_s, exception_on_overflow=False)
@@ -41,6 +41,8 @@ class StreamAudioToMidiWithAub:
                 print(f"Detected note: {midi_note}/{MIDI_DATA_BY_NO[midi_note]['name']}, "
                           f"velocity: {velocity}, "
                           f"note to turn off: {midi_note_to_turn_off}")
+                # TODO add event (or buffer with collected notes in size=fixed_length) to thread pool executor to play the collected notes (use time in midi language)
+                # TODO consider running streamer in thread
 
 
 stream_2_midi = StreamAudioToMidiWithAub()
