@@ -151,9 +151,9 @@ class StreamAudioToMidiWithAub:
 settings = DuetableSettings()
 settings.buffer_length = 4
 stream_2_midi = StreamAudioToMidiWithAub(
-    # converter=AudioToMidiWithAubio(down_sample=1),
-    hop_s=10*2048,  # set for Spotify due to natural network nature for prediction, comment out for Aubio
-    converter=AudioToMidiWithSpotify(),
+    converter=AudioToMidiWithAubio(down_sample=1),
+    # hop_s=10*2048,  # set for Spotify due to natural network nature for prediction, comment out for Aubio
+    # converter=AudioToMidiWithSpotify(),
     settings=settings,
     # device_name="U46"
 )
