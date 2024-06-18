@@ -34,7 +34,7 @@ class SequencePlayer(Thread):
                     'note_on',
                     channel=0,
                     note=note[1],
-                    velocity=note[2],
+                    velocity=127 if note[2] > 127 else note[2],
                     time=note[3],
                 )
                 self._output_midi_device.send(msg)
