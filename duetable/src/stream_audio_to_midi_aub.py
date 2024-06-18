@@ -14,7 +14,7 @@ from duetable.src.audio_to_midi_spoti import AudioToMidiWithSpotify
 from duetable.src.midi_devices import get_elektron_outport
 from duetable.src.interfaces import AudioToMidi
 from duetable.src.midi_utils import MIDI_DATA_BY_NO
-from duetable.src.regenerators import DummyRegenerator
+from duetable.src.regenerators import DummyRegenerator, HttpMuptRegenerator
 from duetable.src.sequence_player import SequencePlayer
 from duetable.src.settings import DuetableSettings
 
@@ -118,7 +118,7 @@ class StreamAudioToMidiWithAub:
         pprint(buffer)
 
         # FIXME ==================== this part should be moved to separate class / constructor
-        regenerator = DummyRegenerator()
+        regenerator = HttpMuptRegenerator()
         regenerated_buffer = regenerator.regenerate_sequence(buffer)
         self.sequence_player.add_generator_bars_notes(regenerated_buffer, reset=True)  # FIXME probably not nice, generator just for one note should be introduced
 
@@ -159,13 +159,13 @@ class StreamAudioToMidiWithAub:
 
 
 settings = DuetableSettings()
-settings.buffer_length = 8
+settings.buffer_length = 4
 
 stream_2_midi = StreamAudioToMidiWithAub(
     converter=AudioToMidiWithAubio(down_sample=1),
     # hop_s=10*2048,  # set for Spotify due to natural network nature for prediction, comment out for Aubio
     # converter=AudioToMidiWithSpotify(),
     settings=settings,
-    # device_name="U46"
+    device_name="U46"
 )
 stream_2_midi.read()
