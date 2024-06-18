@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import aubio
 from mido import MidiFile, MidiTrack, bpm2tempo, MetaMessage, second2tick, Message
 from numpy import median, diff
@@ -133,7 +135,9 @@ class AudioToMidiWithAubio(AudioToMidi):
 
     def _frames2tick(self, frames, tempo, ticks_per_beat=480):
         sec = frames / float(self.sample_rate)
-        return int(second2tick(sec, ticks_per_beat, tempo)/self.down_sample)  # FIXME 2 ??
+        result = int(second2tick(sec, ticks_per_beat, tempo)/self.down_sample)  # FIXME 2 ??
+        print(f"sec={sec}, result={result}, tempo={tempo}")
+        return result
 
 
 # audio_2_midi = AudioToMidiWithAubio()
