@@ -62,7 +62,7 @@ class StreamAudioToMidiWithAub:
 
         self.buffer = []
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
-        self.debug_output_to_midi = True
+        self.debug_output_to_midi = False
 
         self.sequence_player = SequencePlayer(get_elektron_outport())
 
