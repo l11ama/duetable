@@ -11,7 +11,7 @@ class SequencePlayer(Thread):
         self._output_midi_device = output_midi_device
         self._midi_notes_sequence = []
 
-        self.loop = True
+        self.loop = True  # FIXME move to settings
 
         self.daemon = True
         self.start()
@@ -27,6 +27,8 @@ class SequencePlayer(Thread):
         while True:
             if len(self._midi_notes_sequence) > 0:
                 note = self._midi_notes_sequence[current_note_idx]
+
+                print(f'-------------> PLAY note: {note[1]}')
 
                 msg = mido.Message(
                     'note_on',

@@ -14,6 +14,7 @@ from duetable.src.audio_to_midi_spoti import AudioToMidiWithSpotify
 from duetable.src.midi_devices import get_elektron_outport
 from duetable.src.interfaces import AudioToMidi
 from duetable.src.midi_utils import MIDI_DATA_BY_NO
+from duetable.src.regenerators import DummyRegenerator
 from duetable.src.sequence_player import SequencePlayer
 from duetable.src.settings import DuetableSettings
 
@@ -116,12 +117,15 @@ class StreamAudioToMidiWithAub:
         print("\nProcessing buffer:")
         pprint(buffer)
 
-        self.sequence_player.add_generator_bars_notes(buffer, reset=False)  # FIXME probably not nice
+        # FIXME ==================== this part should be moved to separate class / constructor
+        regenerator = DummyRegenerator()
+        regenerated_buffer = regenerator.regenerate_sequence(buffer)
+        self.sequence_player.add_generator_bars_notes(regenerated_buffer, reset=True)  # FIXME probably not nice, generator just for one note should be introduced
 
         beats = [buf_note[3] for buf_note in buffer]
         try:
             tempo_in_bpm = int(abs(median(60. / diff(beats))))
-        except ZeroDivisionError:  # FIXME :)
+        except Exception:  # FIXME :)
             tempo_in_bpm = 120
         print(f"Buffer tempo: {tempo_in_bpm}")
 
@@ -155,7 +159,7 @@ class StreamAudioToMidiWithAub:
 
 
 settings = DuetableSettings()
-settings.buffer_length = 32
+settings.buffer_length = 8
 
 stream_2_midi = StreamAudioToMidiWithAub(
     converter=AudioToMidiWithAubio(down_sample=1),

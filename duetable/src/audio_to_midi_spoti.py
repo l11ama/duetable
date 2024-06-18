@@ -58,5 +58,5 @@ class AudioToMidiWithSpotify(AudioToMidi):
         return detected_data[0]  # FIXME, maybe converter should return array!? :)
 
 
-audio_2_midi = AudioToMidiWithSpotify()
-audio_2_midi.convert('../audio_files/test_piano-full-notes.wav', './test_piano-full-notes-spoti.mid')
+# audio_2_midi = AudioToMidiWithSpotify()
+# audio_2_midi.convert('../audio_files/test_piano-full-notes.wav', './test_piano-full-notes-spoti.mid')

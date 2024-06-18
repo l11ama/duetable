@@ -1,3 +1,6 @@
+from typing import List
+
+
 class AudioToMidi:
 
     def convert(self, input_file_name, output_file_name):
@@ -21,3 +24,15 @@ class AudioToMidi:
 
     def _log(self, message):
         print(f"audio-to-midi: {message}")
+
+
+class MidiBufferRegenerator:
+
+    def regenerate_sequence(self, sequence: List[tuple[str, int, int, int]]) -> List[tuple[str, int, int, int]]:
+        """
+        Regenerate sequence from midi buffer
+
+        :param sequence: List of tuple [midi_str, midi_note, midi_velocity, midi_time]
+        :return: same structure as input
+        """
+        raise NotImplemented()
