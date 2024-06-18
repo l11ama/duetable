@@ -22,7 +22,8 @@ class StreamAudioToMidiWithAub:
             frames_per_buffer=512,
             sample_rate=44100,
             win_s=1024,
-            hop_s=128
+            hop_s=128,
+            device_name='MacBook Pro Microphone'
     ):
         self.settings = settings
         down_sample = 1  # FIXME maybe should be use for pyaudio rate?
@@ -31,12 +32,25 @@ class StreamAudioToMidiWithAub:
         self.hop_s = hop_s // down_sample
 
         self._audio = pyaudio.PyAudio()
+        input_device_index = None
+        print(f"Device count: {self._audio.get_device_count()}")
+        for idx in range(self._audio.get_device_count()):
+            print(f"Device {idx}: {self._audio.get_device_info_by_index(idx)}")
+            if device_name in self._audio.get_device_info_by_index(idx)['name']:
+                input_device_index = idx
+                break
+
+        if input_device_index is None:
+            raise ValueError(f"Device {device_name} not found!")
+
+        print(f'Using: {device_name} with idx={input_device_index}')
+
         self._stream = self._audio.open(
             format=pyaudio.paFloat32,
             channels=1,
             rate=self.sample_rate,
             input=True,
-            input_device_index=0,
+            input_device_index=input_device_index,
             frames_per_buffer=frames_per_buffer
         )
 
@@ -138,5 +152,5 @@ class StreamAudioToMidiWithAub:
 
 settings = DuetableSettings()
 settings.buffer_length = 4
-stream_2_midi = StreamAudioToMidiWithAub(settings=settings)
+stream_2_midi = StreamAudioToMidiWithAub(settings=settings, device_name="U46")
 stream_2_midi.read()
