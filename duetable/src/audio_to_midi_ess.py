@@ -2,7 +2,6 @@ from pprint import pprint
 
 import essentia.standard as estd
 import mido
-from mido import MetaMessage
 
 from duetable.src.interfaces import AudioToMidi
 
@@ -68,5 +67,5 @@ class AudioToMidiWithEssentia(AudioToMidi):
         mid.save(output_file_name)
 
 
-audio_2_midi = AudioToMidiWithEssentia()
-audio_2_midi.convert('../audio_files/test_piano-full-notes.wav', './test_piano-full-notes-ess.mid')
+# audio_2_midi = AudioToMidiWithEssentia()
+# audio_2_midi.convert('../audio_files/test_piano-full-notes.wav', './test_piano-full-notes-ess.mid')

@@ -1,5 +1,3 @@
-from pprint import pprint
-
 import aubio
 from mido import MidiFile, MidiTrack, bpm2tempo, MetaMessage, second2tick, Message
 from numpy import median, diff
@@ -23,6 +21,10 @@ class AudioToMidiWithAubio(AudioToMidi):
         self.win_s = win_s // down_sample
         self.hop_s = hop_s // down_sample
 
+        note_detector_method = "default"
+        self._log(f"Note detector method: {note_detector_method}")
+        self.notes_detector = aubio.notes(note_detector_method, self.win_s, self.hop_s, self.sample_rate)
+
     def convert(self, input_file_name, output_file_name):
         self._log(f"Converting {input_file_name} to {output_file_name}")
         self._log(f"Using samplerate {self.sample_rate}")
@@ -35,10 +37,6 @@ class AudioToMidiWithAubio(AudioToMidi):
         detected_tempo_in_bpm = self._detect_tempo(source)
         self._log(f"Detected tempo: {detected_tempo_in_bpm} BPM")
         source.seek(0)  # set source to beginning of the file
-
-        note_detector_method = "default"
-        self._log(f"Note detector method: {note_detector_method}")
-        notes_detector = aubio.notes(note_detector_method, self.win_s, self.hop_s, self.sample_rate)
 
         midi_tempo = bpm2tempo(detected_tempo_in_bpm)
         midi_file = MidiFile()
@@ -55,7 +53,7 @@ class AudioToMidiWithAubio(AudioToMidi):
         while True:
             samples, read = source()
 
-            note_detection_result = notes_detector(samples)
+            note_detection_result = self.notes_detector(samples)
             midi_note, velocity, midi_note_to_turn_off = note_detection_result
             midi_note = int(midi_note)
             velocity = int(velocity)
@@ -110,6 +108,13 @@ class AudioToMidiWithAubio(AudioToMidi):
 
         source.close()
         midi_file.save(output_file_name)
+
+    def convert_from_buffer(self, samples_buffer, **kwargs) -> (int, int):
+        note_detection_result = self.notes_detector(samples_buffer)
+        midi_note, velocity, midi_note_to_turn_off = note_detection_result
+        midi_note = int(midi_note)
+        velocity = int(velocity)
+        return midi_note, velocity
 
     def _detect_tempo(self, source):
         tempo_detector_method = "specdiff"

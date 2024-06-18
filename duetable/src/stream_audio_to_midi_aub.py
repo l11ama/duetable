@@ -2,7 +2,6 @@ from concurrent.futures import ThreadPoolExecutor
 from pprint import pprint
 from time import time
 
-import aubio
 import pyaudio
 import numpy as np
 from miditoolkit.midi import parser as mid_parser
@@ -10,6 +9,9 @@ from miditoolkit.midi import containers as ct
 from mido import second2tick, bpm2tempo
 from numpy import median, diff
 
+from duetable.src.audio_to_midi_aub import AudioToMidiWithAubio
+from duetable.src.audio_to_midi_spoti import AudioToMidiWithSpotify
+from duetable.src.interfaces import AudioToMidi
 from duetable.src.midi_utils import MIDI_DATA_BY_NO
 from duetable.src.settings import DuetableSettings
 
@@ -19,13 +21,15 @@ class StreamAudioToMidiWithAub:
     def __init__(
             self,
             settings: DuetableSettings,
+            converter: AudioToMidi,
             frames_per_buffer=512,
             sample_rate=44100,
             win_s=1024,
             hop_s=128,
-            device_name='MacBook Pro Microphone'
+            device_name='MacBook Pro Microphone',
     ):
         self.settings = settings
+        self.converter = converter
         down_sample = 1  # FIXME maybe should be use for pyaudio rate?
         self.sample_rate = sample_rate // down_sample
         self.win_s = win_s // down_sample
@@ -59,24 +63,18 @@ class StreamAudioToMidiWithAub:
         self.debug_output_to_midi = True
 
     def read(self):
-        note_detector_method = "default"
-        notes_detector = aubio.notes(note_detector_method, self.win_s, self.hop_s, self.sample_rate)  # TODO try with aubio.pitch
-
         duration = 0
         while True:
-            data = self._stream.read(self.hop_s, exception_on_overflow=False)
-            samples = np.frombuffer(data, dtype=np.float32)
+            stream_data = self._stream.read(self.hop_s, exception_on_overflow=False)
+            samples_buffer = np.frombuffer(stream_data, dtype=np.float32)
 
-            note_detection_result = notes_detector(samples)
-            midi_note, velocity, midi_note_to_turn_off = note_detection_result
-            midi_note = int(midi_note)
-            velocity = int(velocity)
-            midi_note_to_turn_off = int(midi_note_to_turn_off)
+            midi_note, velocity = self.converter.convert_from_buffer(
+                samples_buffer,
+                SAMPWIDTH=self._audio.get_sample_size(pyaudio.paInt16)
+            )
 
             if midi_note != 0:
-                print(f"Detected note: {midi_note}/{MIDI_DATA_BY_NO[midi_note]['name']}, "
-                          f"velocity: {velocity}, "
-                          f"note to turn off: {midi_note_to_turn_off}")
+                print(f"Detected note: {midi_note}/{MIDI_DATA_BY_NO[midi_note]['name']}, velocity: {velocity}")
 
                 # appending detected noted into the buffer
                 has_prev_note = len(self.buffer) > 0
@@ -117,7 +115,7 @@ class StreamAudioToMidiWithAub:
         beats = [buf_note[3] for buf_note in buffer]
         try:
             tempo_in_bpm = int(abs(median(60. / diff(beats))))
-        except ZeroDivisionError:  # :)
+        except ZeroDivisionError:  # FIXME :)
             tempo_in_bpm = 120
         print(f"Buffer tempo: {tempo_in_bpm}")
         midi_tempo = bpm2tempo(tempo_in_bpm)
@@ -152,5 +150,11 @@ class StreamAudioToMidiWithAub:
 
 settings = DuetableSettings()
 settings.buffer_length = 4
-stream_2_midi = StreamAudioToMidiWithAub(settings=settings, device_name="U46")
+stream_2_midi = StreamAudioToMidiWithAub(
+    # converter=AudioToMidiWithAubio(down_sample=1),
+    hop_s=10*2048,  # set for Spotify due to natural network nature for prediction, comment out for Aubio
+    converter=AudioToMidiWithSpotify(),
+    settings=settings,
+    # device_name="U46"
+)
 stream_2_midi.read()
