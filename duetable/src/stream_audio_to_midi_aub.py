@@ -11,8 +11,10 @@ from numpy import median, diff
 
 from duetable.src.audio_to_midi_aub import AudioToMidiWithAubio
 from duetable.src.audio_to_midi_spoti import AudioToMidiWithSpotify
+from duetable.src.midi_devices import get_elektron_outport
 from duetable.src.interfaces import AudioToMidi
 from duetable.src.midi_utils import MIDI_DATA_BY_NO
+from duetable.src.sequence_player import SequencePlayer
 from duetable.src.settings import DuetableSettings
 
 
@@ -62,6 +64,8 @@ class StreamAudioToMidiWithAub:
         self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
         self.debug_output_to_midi = True
 
+        self.sequence_player = SequencePlayer(get_elektron_outport())
+
     def read(self):
         duration = 0
         while True:
@@ -108,9 +112,11 @@ class StreamAudioToMidiWithAub:
                     self.buffer = []
                     self.buffer.append(last_note)
 
-    def _process_buffer(self, buffer):
+    def _process_buffer(self, buffer):  # FIXME extend to different buffer consumers
         print("\nProcessing buffer:")
         pprint(buffer)
+
+        self.sequence_player.add_generator_bars_notes(buffer, reset=False)  # FIXME probably not nice
 
         beats = [buf_note[3] for buf_note in buffer]
         try:
@@ -118,8 +124,8 @@ class StreamAudioToMidiWithAub:
         except ZeroDivisionError:  # FIXME :)
             tempo_in_bpm = 120
         print(f"Buffer tempo: {tempo_in_bpm}")
-        midi_tempo = bpm2tempo(tempo_in_bpm)
 
+        midi_tempo = bpm2tempo(tempo_in_bpm)
         mido_obj = mid_parser.MidiFile()
         beat_resol = mido_obj.ticks_per_beat
 
@@ -149,7 +155,8 @@ class StreamAudioToMidiWithAub:
 
 
 settings = DuetableSettings()
-settings.buffer_length = 4
+settings.buffer_length = 32
+
 stream_2_midi = StreamAudioToMidiWithAub(
     converter=AudioToMidiWithAubio(down_sample=1),
     # hop_s=10*2048,  # set for Spotify due to natural network nature for prediction, comment out for Aubio

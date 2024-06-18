@@ -1,4 +1,5 @@
 import tempfile
+import time
 import wave
 
 from basic_pitch.commandline_printing import file_saved_confirmation
@@ -17,7 +18,9 @@ class AudioToMidiWithSpotify(AudioToMidi):
         pass
 
     def convert(self, input_file_name, output_file_name):
+        start_time = time.time()
         model_output, midi_data, note_events = predict(input_file_name)
+        print('Prediction time: ', time.time() - start_time)
 
         output_file_name_slices = output_file_name.split('/')
         audio_path = output_file_name_slices[-1]
@@ -55,5 +58,5 @@ class AudioToMidiWithSpotify(AudioToMidi):
         return detected_data[0]  # FIXME, maybe converter should return array!? :)
 
 
-# audio_2_midi = AudioToMidiWithSpotify()
-# audio_2_midi.convert('../audio_files/test_piano-full-notes.wav', './test_piano-full-notes-spoti.mid')
+audio_2_midi = AudioToMidiWithSpotify()
+audio_2_midi.convert('../audio_files/test_piano-full-notes.wav', './test_piano-full-notes-spoti.mid')
