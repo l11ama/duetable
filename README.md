@@ -46,7 +46,7 @@ Example configuration for stream input signal to audio:
 ```python
 settings = DuetableSettings()
 settings.buffer_length = 4
-stream_2_midi = StreamAudioToMidiWithAub(
+stream_2_midi = StreamAudioToMidi(
     converter=AudioToMidiWithAubio(down_sample=1),
     settings=settings,
     # device_name="U46",
