@@ -35,6 +35,7 @@ Multiple parameters can be provided on runtime to configure the system. These ar
   * NOTES - recording till amount of notes is reached and equal to `buffer_length`
   * TIME - recording till amount of time is reached and equal to `buffer_time`
 * `record_when_playing` - if the system should record the midi when playing regenerated data
+* `append_to_play_buffer` - if set will append to detected notes to previous ones
 
 # Realtime midi detection
 
