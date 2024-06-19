@@ -14,6 +14,9 @@ class DuetableSettings:
         self._recording_strategy = RecordingStrategy.NOTES
         self._record_when_playing = True
         self._append_to_play_buffer = False
+        self._upper_meter = 4
+        self._lower_meter = 4
+        self._bpm = 120
 
     @property
     def buffer_time(self):
@@ -54,3 +57,27 @@ class DuetableSettings:
     @append_to_play_buffer.setter
     def append_to_play_buffer(self, value):
         self._append_to_play_buffer = value
+
+    @property
+    def upper_meter(self):
+        return self._upper_meter
+
+    @upper_meter.setter
+    def upper_meter(self, value):
+        self._upper_meter = value
+
+    @property
+    def lower_meter(self):
+        return self._lower_meter
+
+    @lower_meter.setter
+    def lower_meter(self, value):
+        self._lower_meter = value
+
+    @property
+    def bpm(self):
+        return self._bpm
+
+    @bpm.setter
+    def bpm(self, value):
+        self._bpm = value

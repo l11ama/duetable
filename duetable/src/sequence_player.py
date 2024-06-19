@@ -39,15 +39,17 @@ class SequencePlayer(Thread):
 
                 print(f'-------------> PLAY note: {note[1]}, curr idx: {current_note_idx}')
 
-                msg = mido.Message(
-                    'note_on',
-                    channel=0,
-                    note=note[1],
-                    velocity=127 if note[2] > 127 else note[2],
-                    time=note[3],
-                )
+                msg = None
+                if note[0] != 'z':
+                    msg = mido.Message(
+                        'note_on',
+                        channel=0,
+                        note=note[1],
+                        velocity=127 if note[2] > 127 else note[2],
+                        time=note[3],
+                    )
 
-                if self._output_midi_device:
+                if self._output_midi_device and msg:
                     self._output_midi_device.send(msg)
                 else:
                     print(f'-------------> Output MIDI device not set, midi msg: {msg}')
@@ -65,7 +67,6 @@ class SequencePlayer(Thread):
                 if not self.loop and current_note_idx == 0:
                     self._reset_notes_sequence()
                     print(f'-------------> Sequence reset')
-
 
     def _reset_notes_sequence(self):
         self._midi_notes_sequence = []

@@ -20,7 +20,7 @@ from duetable.src.midi_utils import MIDI_DATA_BY_NO
 from duetable.src.regenerators import DummyRegenerator, HttpMuptRegenerator
 from duetable.src.sequence_player import SequencePlayer
 from duetable.src.settings import DuetableSettings, RecordingStrategy
-from duetable.src.transformers import SimpleTransposeTransformer
+from duetable.src.transformers import SimpleTransposeTransformer, SimpleTimeTransformer
 
 
 class DuetableThreadPoolExecutor(ThreadPoolExecutor):
@@ -100,18 +100,18 @@ class StreamAudioToMidi:
             raise ValueError('Unknown recording strategy')
 
         while True:
-            if (not settings.record_when_playing and self.sequence_player.is_playing()) or \
-                    self.thread_pool_executor.queue_size() > 0:
-                start_time = time()
-                self.buffer = []
-                if self._stream.is_active():
-                    self._stream.stop_stream()
-                    print('Stopped recording')
-                continue
-            else:
-                if self._stream.is_stopped():
-                    self._stream.start_stream()
-                    print('Started recording')
+            if not settings.record_when_playing:
+                if self.sequence_player.is_playing() or self.thread_pool_executor.queue_size() > 0:
+                    start_time = time()
+                    self.buffer = []
+                    if self._stream.is_active():
+                        self._stream.stop_stream()
+                        print('Stopped recording')
+                    continue
+                else:
+                    if self._stream.is_stopped():
+                        self._stream.start_stream()
+                        print('Started recording')
 
             stream_data = self._stream.read(self.hop_s, exception_on_overflow=False)
             samples_buffer = np.frombuffer(stream_data, dtype=np.float32)
@@ -208,7 +208,7 @@ class StreamAudioToMidi:
         print(f"Possible buffer tempo: {tempo_in_bpm}")
 
         # modify detected buffer
-        regenerated_buffer = self.regenerator.regenerate_sequence(buffer)  # FIXME consider providing BPM
+        regenerated_buffer = self.regenerator.regenerate_sequence(buffer, self.settings)  # FIXME consider providing BPM
 
         if self.transformations:
             for transformer in self.transformations:
@@ -274,7 +274,7 @@ warnings.filterwarnings('ignore')
 
 settings = DuetableSettings()
 settings.buffer_length = 4
-settings.buffer_time = 2.0
+settings.buffer_time = 4.0
 settings.recording_strategy = RecordingStrategy.TIME
 settings.record_when_playing = False
 settings.append_to_play_buffer = False
@@ -296,7 +296,8 @@ stream_2_midi = StreamAudioToMidi(
 
     # post transformers
     transformations=[
-        # SimpleTransposeTransformer(lambda: random.randint(-5, 5))
+        # SimpleTransposeTransformer(lambda: random.randint(-12, 12))
+        # SimpleTimeTransformer(lambda: random.randint(5, 35)/10)
     ]
 )
 stream_2_midi.read()

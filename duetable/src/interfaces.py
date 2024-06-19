@@ -1,5 +1,7 @@
 from typing import List
 
+from duetable.src.settings import DuetableSettings
+
 
 class AudioToMidi:
 
@@ -28,11 +30,12 @@ class AudioToMidi:
 
 class MidiBufferRegenerator:
 
-    def regenerate_sequence(self, sequence: List[tuple[str, int, int, int]]) -> List[tuple[str, int, int, int]]:
+    def regenerate_sequence(self, sequence: List[tuple[str, int, int, int]], settings: DuetableSettings) -> List[tuple[str, int, int, int]]:
         """
         Regenerate sequence from midi buffer
 
         :param sequence: List of tuple [midi_str, midi_note, midi_velocity, midi_time]
+        :param settings: Duetable settings
         :return: same structure as input
         """
         raise NotImplemented()
