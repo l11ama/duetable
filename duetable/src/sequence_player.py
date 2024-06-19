@@ -51,18 +51,20 @@ class SequencePlayer(Thread):
                 else:
                     print(f'-------------> Output MIDI device not set, midi msg: {msg}')
 
+                if isinstance(note[3], Fraction):
+                    print(float(sum(Fraction(s) for s in '1 2/3'.split())))
+                else:
+                    if note[3] > 0:  # can be negative due to trimming if TIME strategy of recorded buffer
+                        time.sleep(note[3])
+
                 current_note_idx += 1
                 if current_note_idx >= len(self._midi_notes_sequence):
                     current_note_idx = 0
 
                 if not self.loop and current_note_idx == 0:
                     self._reset_notes_sequence()
+                    print(f'-------------> Sequence reset')
 
-                if isinstance(note[3], Fraction):
-                    print(float(sum(Fraction(s) for s in '1 2/3'.split())))
-                else:
-                    if note[3] > 0:  # can be negative due to trimming if TIME strategy of recorded buffer
-                        time.sleep(note[3])
 
     def _reset_notes_sequence(self):
         self._midi_notes_sequence = []

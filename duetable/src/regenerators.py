@@ -41,7 +41,8 @@ class HttpMuptRegenerator(MidiBufferRegenerator):
                 return sequence
 
             mupt_json_response = response.json()
-            generated_melody = mupt_json_response['content']['melody'].replace('|:', '\n')
+            generated_melody = mupt_json_response['content']['melody']
+            # generated_melody = mupt_json_response['content']['melody'].replace('|:', '\n|:')
             return self._generate_sequence_from_abc(generated_melody)
 
         except Exception as e:

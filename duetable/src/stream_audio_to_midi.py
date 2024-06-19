@@ -20,6 +20,15 @@ from duetable.src.sequence_player import SequencePlayer
 from duetable.src.settings import DuetableSettings, RecordingStrategy
 
 
+class DuetableThreadPoolExecutor(ThreadPoolExecutor):
+
+    def __init__(self, *args, **kwargs):
+        super(DuetableThreadPoolExecutor, self).__init__(*args, **kwargs)
+
+    def queue_size(self) -> int:
+        return self._work_queue.qsize()
+
+
 class StreamAudioToMidi:
 
     def __init__(
@@ -66,7 +75,7 @@ class StreamAudioToMidi:
         )
 
         self.buffer = []
-        self.thread_pool_executor = ThreadPoolExecutor(max_workers=1)
+        self.thread_pool_executor = DuetableThreadPoolExecutor(max_workers=1)
         self.debug_output_to_midi = False
 
         self.sequence_player = SequencePlayer(get_elektron_outport())
@@ -86,8 +95,18 @@ class StreamAudioToMidi:
             raise ValueError('Unknown recording strategy')
 
         while True:
-            if not settings.record_when_playing and self.sequence_player.is_playing():
+            if (not settings.record_when_playing and self.sequence_player.is_playing()) or \
+                    self.thread_pool_executor.queue_size() > 0:
+                start_time = time()
+                self.buffer = []
+                if self._stream.is_active():
+                    self._stream.stop_stream()
+                    print('Stopped recording')
                 continue
+            else:
+                if self._stream.is_stopped():
+                    self._stream.start_stream()
+                    print('Started recording')
 
             stream_data = self._stream.read(self.hop_s, exception_on_overflow=False)
             samples_buffer = np.frombuffer(stream_data, dtype=np.float32)
@@ -242,7 +261,7 @@ stream_2_midi = StreamAudioToMidi(
     settings=settings,
 
     # audio in
-    # device_name="U46",
+    device_name="U46",
 
     # detected midi regenerator
     # regenerator=HttpMuptRegenerator()
