@@ -36,3 +36,15 @@ class MidiBufferRegenerator:
         :return: same structure as input
         """
         raise NotImplemented()
+
+
+class MidiBufferPostTransformation:
+
+    def transform(self, sequence: List[tuple[str, int, int, int]]) -> List[tuple[str, int, int, int]]:
+        """
+        Regenerate sequence from midi buffer after main regeneration
+        Which post transformation is subject of main configurattion
+        :param sequence:
+        :return:
+        """
+        raise NotImplemented()

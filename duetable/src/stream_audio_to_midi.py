@@ -1,3 +1,4 @@
+import random
 import warnings
 from concurrent.futures import ThreadPoolExecutor
 from pprint import pprint
@@ -14,11 +15,12 @@ from numpy import median, diff
 from duetable.src.audio_to_midi_aub import AudioToMidiWithAubio
 from duetable.src.audio_to_midi_spoti import AudioToMidiWithSpotify
 from duetable.src.midi_devices import get_elektron_outport
-from duetable.src.interfaces import AudioToMidi, MidiBufferRegenerator
+from duetable.src.interfaces import AudioToMidi, MidiBufferRegenerator, MidiBufferPostTransformation
 from duetable.src.midi_utils import MIDI_DATA_BY_NO
 from duetable.src.regenerators import DummyRegenerator, HttpMuptRegenerator
 from duetable.src.sequence_player import SequencePlayer
 from duetable.src.settings import DuetableSettings, RecordingStrategy
+from duetable.src.transformers import SimpleTransposeTransformer
 
 
 class DuetableThreadPoolExecutor(ThreadPoolExecutor):
@@ -41,11 +43,13 @@ class StreamAudioToMidi:
             win_s=1024,
             hop_s=128,
             device_name='MacBook Pro Microphone',
-            regenerator: MidiBufferRegenerator = DummyRegenerator()
+            regenerator: MidiBufferRegenerator = DummyRegenerator(),
+            transformations: List[MidiBufferPostTransformation] = None
     ):
         self.settings = settings
         self.converter = converter
         self.regenerator = regenerator
+        self.transformations = transformations
 
         down_sample = 1  # FIXME maybe should be use for pyaudio rate?
         self.sample_rate = sample_rate // down_sample
@@ -206,7 +210,12 @@ class StreamAudioToMidi:
         # modify detected buffer
         regenerated_buffer = self.regenerator.regenerate_sequence(buffer)  # FIXME consider providing BPM
 
-        # add modified buffer to the player
+        if self.transformations:
+            for transformer in self.transformations:
+                print(f'Transforming with {transformer}')
+                regenerated_buffer = transformer.transform(regenerated_buffer)
+
+                # add modified buffer to the player
         self.sequence_player.add_generator_bars_notes(regenerated_buffer, reset=not self.settings.append_to_play_buffer)
 
         if self.debug_output_to_midi:
@@ -268,7 +277,7 @@ settings.buffer_length = 4
 settings.buffer_time = 2.0
 settings.recording_strategy = RecordingStrategy.TIME
 settings.record_when_playing = False
-# settings.append_to_play_buffer = True
+settings.append_to_play_buffer = False
 
 stream_2_midi = StreamAudioToMidi(
     # midi converter
@@ -283,6 +292,11 @@ stream_2_midi = StreamAudioToMidi(
     # device_name="U46",
 
     # detected midi regenerator
-    # regenerator=HttpMuptRegenerator()
+    regenerator=HttpMuptRegenerator(),
+
+    # post transformers
+    transformations=[
+        # SimpleTransposeTransformer(lambda: random.randint(-5, 5))
+    ]
 )
 stream_2_midi.read()
