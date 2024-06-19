@@ -22,9 +22,9 @@ model_small = AutoModelForCausalLM.from_pretrained("m-a-p/MuPT-v1-8192-190M").ev
 
 class TextGenerationRequest(BaseModel):
     prefix: str
-    n_bars: int = 2
+    n_bars: int = 3
     temperature = 1.0
-    n_samples = 3
+    n_samples = 4
     model = "large"
 
 
@@ -32,6 +32,9 @@ class TextGenerationRequest(BaseModel):
 async def generate_text(request: TextGenerationRequest):
     # Preprocess the input
     prefix = request.prefix.replace("\n", "<n>")  # replace "\n" with "<n>"
+
+    prefix = prefix.replace(":|", "|")
+
     if request.model == 'large':
         tokenizer = tokenizer_large
         model = model_large
@@ -60,6 +63,7 @@ async def generate_text(request: TextGenerationRequest):
             res = res.replace('|:', '\n')
             print(res)
             if validate_abc(res):
+                logging.debug("Valid")
                 correct_outputs.append(res)
         except:
             pass
