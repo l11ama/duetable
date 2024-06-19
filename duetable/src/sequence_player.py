@@ -22,6 +22,7 @@ class SequencePlayer(Thread):
             self._reset_notes_sequence()
 
         self._midi_notes_sequence.extend(midi_notes_sequence)
+        print(f'-------------> notes to play: {len(self._midi_notes_sequence)}')
 
     def is_playing(self):
         return len(self._midi_notes_sequence) > 0
@@ -36,7 +37,7 @@ class SequencePlayer(Thread):
 
                 note = self._midi_notes_sequence[current_note_idx]
 
-                print(f'-------------> PLAY note: {note[1]}')
+                print(f'-------------> PLAY note: {note[1]}, curr idx: {current_note_idx}')
 
                 msg = mido.Message(
                     'note_on',

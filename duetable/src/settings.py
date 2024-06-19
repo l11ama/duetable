@@ -13,6 +13,7 @@ class DuetableSettings:
         self._buffer_time = 16.0  # used if recording_strategy = RecordingStrategy.TIME, in seconds
         self._recording_strategy = RecordingStrategy.NOTES
         self._record_when_playing = True
+        self._append_to_play_buffer = False
 
     @property
     def buffer_time(self):
@@ -45,3 +46,11 @@ class DuetableSettings:
     @record_when_playing.setter
     def record_when_playing(self, value):
         self._record_when_playing = value
+
+    @property
+    def append_to_play_buffer(self):
+        return self._append_to_play_buffer
+
+    @append_to_play_buffer.setter
+    def append_to_play_buffer(self, value):
+        self._append_to_play_buffer = value

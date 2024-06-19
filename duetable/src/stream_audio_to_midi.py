@@ -1,3 +1,4 @@
+import warnings
 from concurrent.futures import ThreadPoolExecutor
 from pprint import pprint
 from time import time
@@ -86,7 +87,7 @@ class StreamAudioToMidi:
 
         stop_recording_condition = None
         if self.settings.recording_strategy == RecordingStrategy.NOTES:
-            stop_recording_condition = lambda: len(self.buffer) == self.settings.buffer_length + 1
+            stop_recording_condition = lambda: len(self.buffer) == self.settings.buffer_length# + 1
 
         if self.settings.recording_strategy == RecordingStrategy.TIME:
             stop_recording_condition = lambda: time() - start_time >= self.settings.buffer_time
@@ -142,43 +143,58 @@ class StreamAudioToMidi:
 
                 duration = time()
 
-                if stop_recording_condition():  # checking if buffer reached its limit
-                    print("Buffer is full...")
-
-                    # remove last note because it is either over size limit or time
-                    last_note = self.buffer.pop()
-
-                    # if recording strategy is TIME, and buffer has more than one note
-                    # let's trim last note to fit the total buffer time
-                    if self.settings.recording_strategy == RecordingStrategy.TIME and len(self.buffer) > 1:
-                        last_idx = len(self.buffer) - 1
-
-                        total_buffer_time = sum([t[3] for t in self.buffer])
-                        print(f'Total buffer time: {total_buffer_time} sec.')
-
-                        sum_except_last = sum([t[3] for t in self.buffer[:last_idx]])
-                        print(f'Total buffer time except last item: {sum_except_last} sec.')
-
-                        if total_buffer_time > settings.buffer_time:
-                            l_l_note = self.buffer[last_idx]
-                            self.buffer[last_idx] = (
-                                l_l_note[0],
-                                l_l_note[1],
-                                l_l_note[2],
-                                round(settings.buffer_time - sum_except_last, 2)
-                            )
-
-                        trimmed_total_buffer_time = sum([t[3] for t in self.buffer])
-                        print(f'Total buffer time after trim: {trimmed_total_buffer_time} sec.')
-
-                    # if recording strategy is TIME, reset start time
+            if stop_recording_condition():  # checking if buffer reached its limit
+                print("Buffer is full...")
+                if len(self.buffer) == 0:
+                    print("but nothing to reprocess...")
                     if self.settings.recording_strategy == RecordingStrategy.TIME:
                         start_time = time()
+                    continue
 
-                    self.thread_pool_executor.submit(self._process_buffer, self.buffer)
+                # if recording strategy is NOTES, and buffer has more than one note
+                # let's estimate last note time
+                if self.settings.recording_strategy == RecordingStrategy.NOTES and len(self.buffer) > 1:
+                    last_idx = len(self.buffer) - 1
+                    sum_except_last = sum([t[3] for t in self.buffer[:last_idx]])
+                    self.buffer[last_idx] = (
+                        self.buffer[last_idx][0],
+                        self.buffer[last_idx][1],
+                        self.buffer[last_idx][2],
+                        round(sum_except_last/(len(self.buffer)-1), 2)
+                    )
 
-                    self.buffer = []
-                    self.buffer.append(last_note)
+                # if recording strategy is TIME, and buffer has more than one note
+                # let's trim last note to fit the total buffer time
+                if self.settings.recording_strategy == RecordingStrategy.TIME and len(self.buffer) > 1:
+                    last_idx = len(self.buffer) - 1
+
+                    total_buffer_time = sum([t[3] for t in self.buffer])
+                    print(f'Total buffer time: {total_buffer_time} sec.')
+
+                    sum_except_last = sum([t[3] for t in self.buffer[:last_idx]])
+                    print(f'Total buffer time except last item: {sum_except_last} sec.')
+
+                    if total_buffer_time > settings.buffer_time:
+                        l_l_note = self.buffer[last_idx]
+                        self.buffer[last_idx] = (
+                            l_l_note[0],
+                            l_l_note[1],
+                            l_l_note[2],
+                            round(settings.buffer_time - sum_except_last, 2)
+                        )
+
+                    # TODO if total buff time is < setting buff time add REST
+
+                    trimmed_total_buffer_time = sum([t[3] for t in self.buffer])
+                    print(f'Total buffer time after trim: {trimmed_total_buffer_time} sec.')
+
+                # if recording strategy is TIME, reset start time
+                if self.settings.recording_strategy == RecordingStrategy.TIME:
+                    start_time = time()
+
+                self.thread_pool_executor.submit(self._process_buffer, self.buffer)
+
+                self.buffer = []
 
     def _process_buffer(self, buffer):
         print("Processing buffer:")
@@ -191,7 +207,7 @@ class StreamAudioToMidi:
         regenerated_buffer = self.regenerator.regenerate_sequence(buffer)  # FIXME consider providing BPM
 
         # add modified buffer to the player
-        self.sequence_player.add_generator_bars_notes(regenerated_buffer, reset=True)  # FIXME consider exposing reset to global settings
+        self.sequence_player.add_generator_bars_notes(regenerated_buffer, reset=not self.settings.append_to_play_buffer)
 
         if self.debug_output_to_midi:
             self._buffer_to_midi_obj(buffer, tempo_in_bpm)
@@ -245,11 +261,14 @@ class StreamAudioToMidi:
         return tempo_in_bpm
 
 
+warnings.filterwarnings('ignore')
+
 settings = DuetableSettings()
 settings.buffer_length = 4
-settings.buffer_time = 8.0
+settings.buffer_time = 2.0
 settings.recording_strategy = RecordingStrategy.TIME
 settings.record_when_playing = False
+# settings.append_to_play_buffer = True
 
 stream_2_midi = StreamAudioToMidi(
     # midi converter
@@ -261,7 +280,7 @@ stream_2_midi = StreamAudioToMidi(
     settings=settings,
 
     # audio in
-    device_name="U46",
+    # device_name="U46",
 
     # detected midi regenerator
     # regenerator=HttpMuptRegenerator()
