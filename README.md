@@ -57,3 +57,39 @@ stream_2_midi.read()
 
 By default data will be read from build in microphone = `'MacBook Pro Microphone'`.
 To adjust please set correct `device_name`. On start, stream class log to console all possible input devices.
+
+# MUPT API specification
+Endpoint: `POST` `http://92.38.241.195:2345/generate/`
+
+Request params:
+* `prefix` - start of the melody in ABC notation
+* `n_bars` - n bars after in output (Default: 2)
+* `temperature` - temperature for sampling (Default: 1.)
+* `n_samples` - samples to generate from (Default: 3)
+* `model` - type of the model ['large', 'small'] (Default: large)
+Example Request body
+```
+{
+  "prefix": "X:1<n>L:1/8<n>Q:1/8=200<n>M:4/4|: BGdB",
+  "n_bars": 4,
+  "temperature": 0.7,
+  "n_samples": 5,
+  "model": "small"
+}
+```
+
+Example Response
+```
+{
+    "status_code": 200,
+    "headers": {
+        "date": "Wed, 19 Jun 2024 15:20:15 GMT",
+        "server": "uvicorn",
+        "content-length": "97",
+        "content-type": "application/json"
+    },
+    "content": {
+        "melody": "X:1\nL:1/8\nQ:1/8=200\nM:4/4\n BGdB Af g2 | g2 dc BG G2 | cAFA cAFA | BGdB A2 G2 |\n"
+    }
+}
+```
