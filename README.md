@@ -28,6 +28,14 @@ for PyAudio please do:
 
 * `brew install portaudio`
 
+# Artist configuration
+
+Multiple parameters can be provided on runtime to configure the system. These are:
+* `recording_strategy` - how the midi buffer is filled. Options are:
+  * NOTES - recording till amount of notes is reached and equal to `buffer_length`
+  * TIME - recording till amount of time is reached and equal to `buffer_time`
+* `record_when_playing` - if the system should record the midi when playing regenerated data
+
 # Realtime midi detection
 
 We have implemented three different Audio To Midi wrappers with usage of API from Essentia, Aubio and Basic Pitch (Spotify).
@@ -40,7 +48,8 @@ settings.buffer_length = 4
 stream_2_midi = StreamAudioToMidiWithAub(
     converter=AudioToMidiWithAubio(down_sample=1),
     settings=settings,
-    # device_name="U46"
+    # device_name="U46",
+    regenerator=HttpMuptRegenerator()
 )
 stream_2_midi.read()
 ```
