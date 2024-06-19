@@ -23,7 +23,9 @@ class HttpMuptRegenerator(MidiBufferRegenerator):
 
         json_payload = {
             "prefix": self._generate_abc_from_sequence(sequence),
-            "max_length": 64
+            "max_length": 64,
+            "n_bars": 1,
+            "temperature": 0.7,
         }
         print('Querying mupt with: ', json_payload)
 

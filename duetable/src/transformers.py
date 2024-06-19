@@ -13,9 +13,11 @@ class SimpleTransposeTransformer(MidiBufferPostTransformation):
         if not sequence:
             return sequence
 
+        transpose_by = self.transpose_by_fn()
+
         new_sequence = []
         for seq in sequence:
-            new_midi_no = seq[1] + self.transpose_by_fn()
+            new_midi_no = seq[1] + transpose_by
             if new_midi_no < 21 or new_midi_no > 127:
                 new_midi_no = seq[1]
 
