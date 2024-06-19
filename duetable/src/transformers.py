@@ -31,3 +31,29 @@ class SimpleTransposeTransformer(MidiBufferPostTransformation):
             )
 
         return new_sequence
+
+
+class SimpleTimeTransformer(MidiBufferPostTransformation):
+
+    def __init__(self, change_time_fn: Callable):
+        self.change_time_fn = change_time_fn
+
+    def transform(self, sequence: List[tuple[str, int, int, int]]) -> List[tuple[str, int, int, int]]:
+        if not sequence:
+            return sequence
+
+        new_sequence = []
+        for seq in sequence:
+            new_midi_duration = seq[3] + self.change_time_fn()
+            new_sequence.append(
+                (
+                    seq[0],
+                    seq[1],
+                    seq[2],
+                    new_midi_duration
+                )
+            )
+
+        return new_sequence
+
+
