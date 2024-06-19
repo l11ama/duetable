@@ -17,7 +17,7 @@ from duetable.src.interfaces import AudioToMidi, MidiBufferRegenerator
 from duetable.src.midi_utils import MIDI_DATA_BY_NO
 from duetable.src.regenerators import DummyRegenerator, HttpMuptRegenerator
 from duetable.src.sequence_player import SequencePlayer
-from duetable.src.settings import DuetableSettings
+from duetable.src.settings import DuetableSettings, RecordingStrategy
 
 
 class StreamAudioToMidi:
@@ -72,8 +72,23 @@ class StreamAudioToMidi:
         self.sequence_player = SequencePlayer(get_elektron_outport())
 
     def read(self):
+        start_time = time()
         duration = 0
+
+        stop_recording_condition = None
+        if self.settings.recording_strategy == RecordingStrategy.NOTES:
+            stop_recording_condition = lambda: len(self.buffer) == self.settings.buffer_length + 1
+
+        if self.settings.recording_strategy == RecordingStrategy.TIME:
+            stop_recording_condition = lambda: time() - start_time >= self.settings.buffer_time
+
+        if not stop_recording_condition:
+            raise ValueError('Unknown recording strategy')
+
         while True:
+            if not settings.record_when_playing and self.sequence_player.is_playing():
+                continue
+
             stream_data = self._stream.read(self.hop_s, exception_on_overflow=False)
             samples_buffer = np.frombuffer(stream_data, dtype=np.float32)
 
@@ -108,9 +123,39 @@ class StreamAudioToMidi:
 
                 duration = time()
 
-                if len(self.buffer) == self.settings.buffer_length + 1:  # checking if buffer reached its limit
+                if stop_recording_condition():  # checking if buffer reached its limit
                     print("Buffer is full...")
+
+                    # remove last note because it is either over size limit or time
                     last_note = self.buffer.pop()
+
+                    # if recording strategy is TIME, and buffer has more than one note
+                    # let's trim last note to fit the total buffer time
+                    if self.settings.recording_strategy == RecordingStrategy.TIME and len(self.buffer) > 1:
+                        last_idx = len(self.buffer) - 1
+
+                        total_buffer_time = sum([t[3] for t in self.buffer])
+                        print(f'Total buffer time: {total_buffer_time} sec.')
+
+                        sum_except_last = sum([t[3] for t in self.buffer[:last_idx]])
+                        print(f'Total buffer time except last item: {sum_except_last} sec.')
+
+                        if total_buffer_time > settings.buffer_time:
+                            l_l_note = self.buffer[last_idx]
+                            self.buffer[last_idx] = (
+                                l_l_note[0],
+                                l_l_note[1],
+                                l_l_note[2],
+                                round(settings.buffer_time - sum_except_last, 2)
+                            )
+
+                        trimmed_total_buffer_time = sum([t[3] for t in self.buffer])
+                        print(f'Total buffer time after trim: {trimmed_total_buffer_time} sec.')
+
+                    # if recording strategy is TIME, reset start time
+                    if self.settings.recording_strategy == RecordingStrategy.TIME:
+                        start_time = time()
+
                     self.thread_pool_executor.submit(self._process_buffer, self.buffer)
 
                     self.buffer = []
@@ -120,13 +165,14 @@ class StreamAudioToMidi:
         print("Processing buffer:")
         pprint(buffer)
 
+        tempo_in_bpm = self._detect_bpm_from_buffer(buffer)
+        print(f"Possible buffer tempo: {tempo_in_bpm}")
+
         # modify detected buffer
         regenerated_buffer = self.regenerator.regenerate_sequence(buffer)  # FIXME consider providing BPM
 
+        # add modified buffer to the player
         self.sequence_player.add_generator_bars_notes(regenerated_buffer, reset=True)  # FIXME consider exposing reset to global settings
-
-        tempo_in_bpm = self._detect_bpm_from_buffer(buffer)
-        print(f"Possible buffer tempo: {tempo_in_bpm}")
 
         if self.debug_output_to_midi:
             self._buffer_to_midi_obj(buffer, tempo_in_bpm)
@@ -135,7 +181,7 @@ class StreamAudioToMidi:
             self,
             buffer: List[tuple[str, int, int, int]],
             tempo_in_bpm: float = 120.0
-    ) -> Optional[mid_parser.MidiFile]:
+    ) -> mid_parser.MidiFile:
         """
         Convert detected buffer into MIdi File
         :param buffer:
@@ -153,7 +199,6 @@ class StreamAudioToMidi:
         for buffer_note in buffer:
             start = second2tick(start_off, beat_resol, midi_tempo)
             end = second2tick(buffer_note[3], beat_resol, midi_tempo)
-            # print(f'start_off={start_off}, start={start}, end={end}')
 
             note = ct.Note(
                 start=start,
@@ -165,9 +210,11 @@ class StreamAudioToMidi:
 
             start_off = start_off + buffer_note[3]
 
-            debug_file_name = f'./buffer_result_{int(time())}.midi'
-            mido_obj.dump(debug_file_name)
-            print(f'Saved buffer to MIDI for debug purpose: {debug_file_name}')
+        debug_file_name = f'./buffer_result_{int(time())}.midi'
+        mido_obj.dump(debug_file_name)
+        print(f'Saved buffer to MIDI for debug purpose: {debug_file_name}')
+
+        return mido_obj
 
     def _detect_bpm_from_buffer(self, buffer: List[tuple[str, int, int, int]]) -> float:
         beats = [buf_note[3] for buf_note in buffer]
@@ -181,6 +228,9 @@ class StreamAudioToMidi:
 
 settings = DuetableSettings()
 settings.buffer_length = 4
+settings.buffer_time = 8.0
+settings.recording_strategy = RecordingStrategy.TIME
+settings.record_when_playing = False
 
 stream_2_midi = StreamAudioToMidi(
     # midi converter
@@ -192,9 +242,9 @@ stream_2_midi = StreamAudioToMidi(
     settings=settings,
 
     # audio in
-    device_name="U46",
+    # device_name="U46",
 
     # detected midi regenerator
-    regenerator=HttpMuptRegenerator()
+    # regenerator=HttpMuptRegenerator()
 )
 stream_2_midi.read()

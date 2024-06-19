@@ -51,7 +51,7 @@ class HttpMuptRegenerator(MidiBufferRegenerator):
 
     def _generate_abc_from_sequence(self, sequence: List[tuple[str, int, int, int]]) -> str:
         melody_abc = ''.join([note[0] for note in sequence])
-        return f"X:1<n>L:1/8<n>Q:1/8=200<n>M:4/4|: {melody_abc} :|"
+        return f"X:1<n>L:1/8<n>Q:1/8=200<n>M:4/4|: {melody_abc} :|"  # FIXME we should split to bars, follow metrum, Q, and BPM
 
     def _generate_sequence_from_abc(self, generated_melody_in_abc: str) -> List[tuple[str, int, int, int]]:
         print(f'Regenerated melody in ABC:\n{generated_melody_in_abc}')
