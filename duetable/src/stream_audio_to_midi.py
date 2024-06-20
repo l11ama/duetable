@@ -106,7 +106,7 @@ class StreamAudioToMidi:
             raise ValueError('Unknown recording strategy')
 
         while True:
-            if not settings.record_when_playing:
+            if not self.settings.record_when_playing:
                 if self.sequence_player.is_playing() or self.thread_pool_executor.queue_size() > 0:
                     start_time = time()
 
@@ -188,13 +188,13 @@ class StreamAudioToMidi:
                     sum_except_last = sum([t[3] for t in self.buffer[:last_idx]])
                     print(f'Total buffer time except last item: {sum_except_last} sec.')
 
-                    if total_buffer_time > settings.buffer_time:
+                    if total_buffer_time > self.settings.buffer_time:
                         l_l_note = self.buffer[last_idx]
                         self.buffer[last_idx] = (
                             l_l_note[0],
                             l_l_note[1],
                             l_l_note[2],
-                            round(settings.buffer_time - sum_except_last, 2)
+                            round(self.settings.buffer_time - sum_except_last, 2)
                         )
 
                     # TODO if total buff time is < setting buff time add REST
