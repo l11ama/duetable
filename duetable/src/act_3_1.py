@@ -9,7 +9,7 @@ from duetable.src.regenerators import HttpMuptRegenerator, MuptWithMarkovChainRe
     MarkovChainRegenerator
 from duetable.src.settings import DuetableSettings, RecordingStrategy
 from duetable.src.stream_audio_to_midi import StreamAudioToMidi
-from duetable.src.transformers import RandomMuteTransformer
+from duetable.src.transformers import RandomMuteTransformer, MidiRangeTransformer
 
 log_input_output_devices()
 open_output('Elektron Model:Cycles')
@@ -21,32 +21,34 @@ settings = DuetableSettings()
 # ====================================================== Jerzy's settings
 # ======================================================
 
-settings.buffer_length = 11
-# settings.buffer_time = 4.0
-settings.recording_strategy = RecordingStrategy.NOTES
-settings.record_when_playing = True
+# settings.buffer_length = 11
+settings.buffer_time = 4.0
+settings.recording_strategy = RecordingStrategy.TIME_ONCE
+settings.record_when_playing = False
 settings.append_to_play_buffer = False
 
-settings.upper_meter = 4
-settings.lower_meter = 4
-settings.bpm = 60
+settings.upper_meter = 1
+settings.lower_meter = 1
+settings.bpm = 20
+settings.sleep_with_note = False
 
-settings.n_bars = 2
+settings.n_bars = 4
 settings.temperature = 0.8
 settings.model_size = "large"
+settings.mel_key = "Cm"
 
 settings.loop_playback = True
 
 # regenerator = HttpMuptRegenerator()
-# regenerator = MuptWithMarkovChainRegenerator()
-regenerator = MarkovChainRegenerator()
+regenerator = MuptWithMarkovChainRegenerator()
+# regenerator = MarkovChainRegenerator()
 # regenerator = DummyRegenerator()
 
 transformers = [
     RandomMuteTransformer(lambda: random.choice([True, False, False])),
     # SimpleTransposeTransformer(lambda: random.randint(-12, 12)),
     # SimpleTimeTransformer(lambda: random.randint(5, 35)/10)
-    # MidiRangeTransformer(from_midi_no=26, to_midi_no=90)
+    MidiRangeTransformer(from_midi_no=26, to_midi_no=60)
 ]
 
 # ====================================================== RUNNER ======================================================

@@ -24,6 +24,7 @@ class DuetableSettings:
         self._temperature = 1.0
         self._model_size = "large"
         self._mel_key = "C"
+        self._sleep_with_note = True
 
     @property
     def buffer_time(self):
@@ -128,3 +129,11 @@ class DuetableSettings:
     @mel_key.setter
     def mel_key(self, mel_key):
         self._mel_key = mel_key
+
+    @property
+    def sleep_with_note(self):
+        return self._sleep_with_note
+
+    @sleep_with_note.setter
+    def sleep_with_note(self, value):
+        self._sleep_with_note = value

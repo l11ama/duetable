@@ -28,7 +28,7 @@ def generate_abc_from_sequence(sequence: List[tuple[str, int, int, int]], settin
     if len(bars[len(bars) - 1]) != upper_meter:
         last_bar = bars[len(bars) - 1]
         for i in range(upper_meter - len(last_bar)):
-            last_bar.append(('z', 0, 0, 0, midi_duration_to_abc_length(lower_meter)))
+            last_bar.append(('z', -1, 0, 0, midi_duration_to_abc_length(lower_meter)))
 
     # abc header
     abc_notation = f"X: 1\nT: Duetable detected score\nL: 1/{settings.lower_meter}\n" \
