@@ -79,13 +79,9 @@ def decode(piece, n_bars=2):
             # assert len(lst) == length
             pass
 
-    key_split = heads.split("K:")
+    key_split = heads.split("|")
     assert len(key_split) > 0
-    before_key = key_split[0]
-    print(key_split)
-    key = key_split[1].split("<n>")[0]
-    dec_piece += before_key + "K:"
-    dec_piece += key + "<n>"
+    dec_piece += key_split[0]
 
 
     print(all_bar_lst)
