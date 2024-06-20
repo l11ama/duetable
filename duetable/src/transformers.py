@@ -1,5 +1,4 @@
 from typing import List, Callable
-
 from duetable.src.interfaces import MidiBufferPostTransformation
 from duetable.src.midi_utils import MIDI_DATA_BY_NO
 
@@ -100,6 +99,7 @@ class ApproachNotesTransformer(MidiBufferPostTransformation):
             new_sequence.append(seq)
 
         return new_sequence
+
 
 class MidiRangeTransformer(MidiBufferPostTransformation):
 
