@@ -43,13 +43,37 @@ class SimpleTimeTransformer(MidiBufferPostTransformation):
 
         new_sequence = []
         for seq in sequence:
-            new_midi_duration = seq[3] + self.change_time_fn()
+            new_midi_duration = self.change_time_fn()
             new_sequence.append(
                 (
                     seq[0],
                     seq[1],
                     seq[2],
                     new_midi_duration
+                )
+            )
+
+        return new_sequence
+
+
+class RandomMuteTransformer(MidiBufferPostTransformation):
+
+    def __init__(self, mute_fn: Callable):
+        self.mute_fn = mute_fn
+
+    def transform(self, sequence: List[tuple[str, int, int, int]]) -> List[tuple[str, int, int, int]]:
+        if not sequence:
+            return sequence
+
+        new_sequence = []
+        for seq in sequence:
+            mute = self.mute_fn()
+            new_sequence.append(
+                (
+                    seq[0] if not mute else 'z',
+                    seq[1],
+                    seq[2],
+                    seq[3]
                 )
             )
 

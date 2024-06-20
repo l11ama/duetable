@@ -28,10 +28,10 @@ settings.append_to_play_buffer = False
 
 settings.upper_meter = 4
 settings.lower_meter = 4
-settings.bpm = 120
+settings.bpm = 60
 
-settings.n_bars = 4
-settings.temperature = 0.8
+settings.n_bars = 2
+settings.temperature = 1.0
 settings.model_size = "large"
 # settings.mel_key = "C"
 
@@ -41,9 +41,9 @@ regenerator = HttpMuptRegenerator()
 # regenerator=MuptWithMarkovChainRegenerator()
 
 transformers = [
-    FixedRangeTransformer(2, 4),
-    ApproachNotesTransformer(),
-    SimpleTimeTransformer()
+    # FixedRangeTransformer(2, 4),
+    # ApproachNotesTransformer(),
+    #SimpleTimeTransformer(lambda: random.randint(5, 15) / 10),
 ]
 
 # ====================================================== RUNNER ======================================================

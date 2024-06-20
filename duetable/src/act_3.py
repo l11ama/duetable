@@ -3,7 +3,8 @@
 # ======================================================
 from duetable.src.audio_to_midi_aub import AudioToMidiWithAubio
 from duetable.src.midi_devices import log_input_output_devices, open_output
-from duetable.src.regenerators import HttpMuptRegenerator
+from duetable.src.regenerators import HttpMuptRegenerator, MuptWithMarkovChainRegenerator, DummyRegenerator, \
+    MarkovChainRegenerator
 from duetable.src.settings import DuetableSettings, RecordingStrategy
 from duetable.src.stream_audio_to_midi import StreamAudioToMidi
 
@@ -17,24 +18,26 @@ settings = DuetableSettings()
 # ====================================================== Johnathan's settings
 # ======================================================
 
-settings.buffer_length = 12
+settings.buffer_length = 11
 settings.buffer_time = 4.0
-settings.recording_strategy = RecordingStrategy.TIME
-settings.record_when_playing = False
+settings.recording_strategy = RecordingStrategy.NOTES
+settings.record_when_playing = True
 settings.append_to_play_buffer = False
 
 settings.upper_meter = 4
 settings.lower_meter = 4
-settings.bpm = 120
+settings.bpm = 60
 
 settings.n_bars = 2
 settings.temperature = 0.8
 settings.model_size = "large"
 
-settings.loop_playback = False
+settings.loop_playback = True
 
-regenerator = HttpMuptRegenerator()
-# regenerator=MuptWithMarkovChainRegenerator(),
+# regenerator = HttpMuptRegenerator()
+# regenerator = MuptWithMarkovChainRegenerator()
+regenerator = MarkovChainRegenerator()
+# regenerator = DummyRegenerator()
 
 transformers = [
     # SimpleTransposeTransformer(lambda: random.randint(-12, 12)),
@@ -54,7 +57,7 @@ stream_2_midi = StreamAudioToMidi(
     settings=settings,
 
     # audio in
-    device_name="U46",
+    # device_name="U46",
 
     # detected midi regenerator
     regenerator=regenerator,
