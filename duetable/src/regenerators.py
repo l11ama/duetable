@@ -1,3 +1,4 @@
+from pprint import pprint
 from typing import List
 
 import requests
@@ -81,15 +82,16 @@ class HttpMuptRegenerator(MidiBufferRegenerator):
         abc_notation = f"X: 1\nT: Duetable detected score\nL: 1/{settings.lower_meter}\n" \
                        f"Q: 1/4={settings.bpm}\nM: 4/4\nK: C\n"
 
-        for bar in bars[:-2]:
+        for bar in bars:
             abc_notation += "| "
             for note_name, midi_number, midi_velocity, midi_duration, note_duration in bar:
                 abc_note = MIDI_NO_TO_ABC.get(midi_number, "z")  # Use 'z' (rest) if note is not found
                 abc_length = note_duration
-                abc_notation += f"{abc_note}{abc_length} "
-        # abc_notation += "|"
+                # abc_notation += f"{abc_note}{abc_length} "
+                abc_notation += f"{abc_note} "
+        abc_notation += "|"
 
-        return abc_notation.replace("\n", "<n>")
+        return abc_notation#.replace("\n", "\\n")
 
     # def _generate_abc_from_sequence(sequence: List[tuple[str, int, int, int]], settings: DuetableSettings) -> str:
     #     melody_abc = ''.join([note[0] for note in sequence])
@@ -128,4 +130,6 @@ class HttpMuptRegenerator(MidiBufferRegenerator):
                 )
                 modified_sequence.append(reg_note)
 
+        print(f"Sequence from ABC:")
+        pprint(modified_sequence)
         return modified_sequence

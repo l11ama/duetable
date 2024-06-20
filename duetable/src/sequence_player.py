@@ -37,7 +37,7 @@ class SequencePlayer(Thread):
 
                 note = self._midi_notes_sequence[current_note_idx]
 
-                print(f'-------------> PLAY note: {note[1]}, curr idx: {current_note_idx}')
+                print(f'-------------> PLAY note: {note[0]}({note[1]}), curr idx: {current_note_idx}')
 
                 msg = None
                 if note[0] != 'z':
