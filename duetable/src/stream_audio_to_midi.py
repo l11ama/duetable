@@ -114,10 +114,14 @@ class StreamAudioToMidi:
             if not settings.record_when_playing:
                 if self.sequence_player.is_playing() or self.thread_pool_executor.queue_size() > 0:
                     start_time = time()
-                    self.buffer = []
+
+                    if self.settings.recording_strategy not in (RecordingStrategy.TIME_ONCE, RecordingStrategy.NOTES_ONCE):
+                        self.buffer = []
+
                     if self._stream.is_active():
                         self._stream.stop_stream()
                         print('Stopped recording')
+
                     continue
                 else:
                     if self._stream.is_stopped():
@@ -313,17 +317,17 @@ open_output('Elektron Model:Cycles')
 open_output('Duetable Bus 1')
 
 settings = DuetableSettings()
-settings.buffer_length = 4
+settings.buffer_length = 12
 settings.buffer_time = 4.0
-settings.recording_strategy = RecordingStrategy.NOTES_ONCE
+settings.recording_strategy = RecordingStrategy.TIME
 settings.record_when_playing = False
 settings.append_to_play_buffer = False
 
 settings.upper_meter = 4
 settings.lower_meter = 4
-settings.bpm = 140
+settings.bpm = 120
 
-settings.n_bars = 1
+settings.n_bars = 2
 settings.temperature = 0.8
 settings.model_size = "large"
 
@@ -342,14 +346,14 @@ stream_2_midi = StreamAudioToMidi(
     # device_name="U46",
 
     # detected midi regenerator
-    # regenerator=HttpMuptRegenerator(),
-    regenerator=MuptWithMarkovChainRegenerator(),
+    regenerator=HttpMuptRegenerator(),
+    # regenerator=MuptWithMarkovChainRegenerator(),
 
     # post transformers
     transformations=[
         # SimpleTransposeTransformer(lambda: random.randint(-12, 12)),
         # SimpleTimeTransformer(lambda: random.randint(5, 35)/10)
-        MidiRangeTransformer(from_midi_no=26, to_midi_no=90)
+        # MidiRangeTransformer(from_midi_no=26, to_midi_no=90)
     ]
 )
 stream_2_midi.read()

@@ -46,12 +46,12 @@ class SequencePlayer(Thread):
                 msg = None
                 play_note_in_midi_devices(note)
 
-                if isinstance(note[3], Fraction):
-                    print(float(sum(Fraction(s) for s in '1 2/3'.split())))
-                else:
-                    if note[3] > 0:  # can be negative due to trimming if TIME strategy of recorded buffer
-                        time.sleep(note[3])
-                # time.sleep(note_length_in_seconds(self.bpm, self.lower_meter))
+                # if isinstance(note[3], Fraction):
+                #     print(float(sum(Fraction(s) for s in '1 2/3'.split())))
+                # else:
+                #     if note[3] > 0:  # can be negative due to trimming if TIME strategy of recorded buffer
+                #         time.sleep(note[3])
+                time.sleep(note_length_in_seconds(self.bpm, self.lower_meter))
 
                 current_note_idx += 1
                 if current_note_idx >= len(self._midi_notes_sequence):
