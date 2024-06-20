@@ -32,7 +32,7 @@ def generate_abc_from_sequence(sequence: List[tuple[str, int, int, int]], settin
 
     # abc header
     abc_notation = f"X: 1\nT: Duetable detected score\nL: 1/{settings.lower_meter}\n" \
-                   f"Q: 1/4={settings.bpm}\nM: 4/4\nK: C\n"
+                   f"Q: 1/4={settings.bpm}\nM: 4/4\nK: {settings.mel_key}\n"
 
     for bar in bars:
         abc_notation += "| "

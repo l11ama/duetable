@@ -23,6 +23,7 @@ class DuetableSettings:
         self._n_bars = 2
         self._temperature = 1.0
         self._model_size = "large"
+        self._mel_key = "C"
 
     @property
     def buffer_time(self):
@@ -119,3 +120,11 @@ class DuetableSettings:
     @model_size.setter
     def model_size(self, value):
         self._model_size = value
+
+    @property
+    def mel_key(self):
+        return self._mel_key
+
+    @mel_key.setter
+    def mel_key(self, mel_key):
+        self._mel_key = mel_key
