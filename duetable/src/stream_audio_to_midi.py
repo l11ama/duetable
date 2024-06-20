@@ -13,8 +13,8 @@ from mido import second2tick, bpm2tempo
 from numpy import median, diff
 
 from duetable.src.audio_to_midi_aub import AudioToMidiWithAubio
-from duetable.src.audio_to_midi_spoti import AudioToMidiWithSpotify
-from duetable.src.midi_devices import get_elektron_outport
+# from duetable.src.audio_to_midi_spoti import AudioToMidiWithSpotify
+from duetable.src.midi_devices import log_input_output_devices, open_output
 from duetable.src.interfaces import AudioToMidi, MidiBufferRegenerator, MidiBufferPostTransformation
 from duetable.src.midi_utils import MIDI_DATA_BY_NO
 from duetable.src.regenerators import DummyRegenerator, HttpMuptRegenerator, MuptWithMarkovChainRegenerator
@@ -84,7 +84,6 @@ class StreamAudioToMidi:
         self.debug_output_to_midi = False
 
         self.sequence_player = SequencePlayer(
-            get_elektron_outport(),
             loop=settings.loop_playback,
             bpm=settings.bpm,
             lower_meter=settings.lower_meter
@@ -308,16 +307,25 @@ class StreamAudioToMidi:
 
 warnings.filterwarnings('ignore')
 
+# ======================================================
+log_input_output_devices()
+open_output('Elektron Model:Cycles')
+open_output('Duetable Bus 1')
+
 settings = DuetableSettings()
-settings.buffer_length = 12
+settings.buffer_length = 4
 settings.buffer_time = 4.0
 settings.recording_strategy = RecordingStrategy.NOTES_ONCE
 settings.record_when_playing = False
 settings.append_to_play_buffer = False
 
-settings.upper_meter = 1
-settings.lower_meter = 2
-settings.bpm = 60
+settings.upper_meter = 4
+settings.lower_meter = 4
+settings.bpm = 140
+
+settings.n_bars = 1
+settings.temperature = 0.8
+settings.model_size = "large"
 
 settings.loop_playback = False
 

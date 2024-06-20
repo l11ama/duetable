@@ -58,7 +58,7 @@ class MarkovRegenerator:
             chain[state]['probabilities'] = probabilities
             chain[state]['ranges'] = ranges
 
-        pprint(chain)
+        # pprint(chain)
 
         selected_midi_no: int = states[random.randint(0, len(states) - 1)]
         system_random = random.SystemRandom()

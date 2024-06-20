@@ -1,7 +1,7 @@
 import mido
 
 
-def _log_input_output_devices():
+def log_input_output_devices():
     onn = mido.get_output_names()
     print(f'all available outputs: {onn}')
 
@@ -9,19 +9,28 @@ def _log_input_output_devices():
     print(f'all available inputs: {inn}')
 
 
-_log_input_output_devices()
+midi_devices = []
 
 
-output_device = 'Elektron Model:Cycles'
-# output_device = 'Duetable Bus 1'
-
-_elektron_outport = None
-try:
-    _elektron_outport = mido.open_output(output_device)
-except Exception as e:
-    print(f'warn: could not open {output_device} MIDI output port!')
-    elektron_outport = None
+def open_output(output_device_name):
+    try:
+        midi_devices.append(mido.open_output(output_device_name))
+    except Exception as e:
+        print(f'warn: could not open {output_device_name} MIDI output port!')
 
 
-def get_elektron_outport():
-    return _elektron_outport
+def play_note_in_midi_devices(note):
+    if len(midi_devices) == 0:
+        return
+
+    if note[0] != 'z':
+        msg = mido.Message(
+            'note_on',
+            channel=0,
+            note=note[1],
+            velocity=127 if note[2] > 127 else note[2],
+            time=note[3],
+        )
+
+        for midi_device in midi_devices:
+            midi_device.send(msg)

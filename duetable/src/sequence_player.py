@@ -4,14 +4,14 @@ from threading import Thread
 
 import mido
 
+from duetable.src.midi_devices import play_note_in_midi_devices
 from duetable.src.midi_utils import note_length_in_seconds
 
 
 class SequencePlayer(Thread):
 
-    def __init__(self, output_midi_device, loop=False, bpm=120, lower_meter=4):
+    def __init__(self, loop=False, bpm=120, lower_meter=4):
         super(SequencePlayer, self).__init__(name="SequencePlayer")
-        self._output_midi_device = output_midi_device
         self._midi_notes_sequence = []
 
         self.loop = loop
@@ -44,19 +44,7 @@ class SequencePlayer(Thread):
                 print(f'-------------> PLAY note: {note[0]}({note[1]}), curr idx: {current_note_idx}')
 
                 msg = None
-                if note[0] != 'z':
-                    msg = mido.Message(
-                        'note_on',
-                        channel=0,
-                        note=note[1],
-                        velocity=127 if note[2] > 127 else note[2],
-                        time=note[3],
-                    )
-
-                if self._output_midi_device and msg:
-                    self._output_midi_device.send(msg)
-                else:
-                    print(f'-------------> Output MIDI device not set, midi msg: {msg}')
+                play_note_in_midi_devices(note)
 
                 if isinstance(note[3], Fraction):
                     print(float(sum(Fraction(s) for s in '1 2/3'.split())))
