@@ -45,3 +45,13 @@ class MuptWithMarkovChainRegenerator(HttpMuptRegenerator):
             self._mupt_sequence = super(MuptWithMarkovChainRegenerator, self).regenerate_sequence(sequence, settings)
 
         return self._markov.regenerate(self._mupt_sequence)
+
+
+class MarkovChainRegenerator(MidiBufferRegenerator):
+
+    def __init__(self):
+        super(MarkovChainRegenerator, self).__init__()
+        self._markov = MarkovRegenerator()
+
+    def regenerate_sequence(self, sequence: List[tuple[str, int, int, int]], settings: DuetableSettings) -> List[tuple[str, int, int, int]]:
+        return self._markov.regenerate(sequence)
