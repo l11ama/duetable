@@ -24,7 +24,7 @@ class TextGenerationRequest(BaseModel):
     prefix: str
     n_bars: int = 3
     temperature = 1.0
-    n_samples = 4
+    n_samples = 8
     model = "large"
 
 
@@ -32,6 +32,7 @@ class TextGenerationRequest(BaseModel):
 async def generate_text(request: TextGenerationRequest):
     # Preprocess the input
     prefix = request.prefix.replace("\n", "<n>")  # replace "\n" with "<n>"
+    prefix = prefix.replace("<n>T: Duetable detected score", '')
 
     prefix = prefix.replace(":|", "|")
 
@@ -47,7 +48,7 @@ async def generate_text(request: TextGenerationRequest):
     # Generate text
     outputs = model.generate(
         inputs.input_ids,
-        max_length=128,
+        max_length=inputs.input_ids.shape[1] + request.n_bars * 16,
         temperature=request.temperature,
         num_return_sequences=request.n_samples,
         do_sample=True
@@ -61,6 +62,8 @@ async def generate_text(request: TextGenerationRequest):
         try:
             res = decode(output, n_bars=request.n_bars).replace('<n>', '\n')
             res = res.replace('|:', '\n')
+            res = res.replace(']', '')
+
             print(res)
             if validate_abc(res):
                 logging.debug("Valid")

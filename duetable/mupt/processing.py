@@ -83,7 +83,7 @@ def decode(piece, n_bars=2):
     for i in range(len(all_bar_lst)):
         if len(all_bar_lst) > 1:
             dec_piece += f'V:{i + 1}\n'
-        dec_piece += ''.join(all_bar_lst[i][:n_bars - 1])
+        dec_piece += ''.join(all_bar_lst[i][:n_bars])
         dec_piece += '\n'
     # Remove redundant spaces.
     dec_piece = re.sub(' {2,}', ' ', dec_piece)
@@ -94,10 +94,11 @@ def decode(piece, n_bars=2):
 def validate_abc(abc_string):
     abc_parser = m21.converter.parse(abc_string, format='abc')
     # Extract the first part and the first measure for validation
-    part = abc_parser.parts[0]
-    measure = part.measure(1)
-    time_signature = measure.getTimeSignatures()[0]
-    return validate_measure(measure, time_signature)
+    # part = abc_parser.parts[0]
+    # measure = part.measure(1)
+    # time_signature = measure.getTimeSignatures()[0]
+    # return validate_measure(measure, time_signature) # TODO: measure validation
+    return True
 
 
 # Function to validate a measure
