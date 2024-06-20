@@ -20,7 +20,7 @@ from duetable.src.midi_utils import MIDI_DATA_BY_NO
 from duetable.src.regenerators import DummyRegenerator, HttpMuptRegenerator, MuptWithMarkovChainRegenerator
 from duetable.src.sequence_player import SequencePlayer
 from duetable.src.settings import DuetableSettings, RecordingStrategy
-from duetable.src.transformers import SimpleTransposeTransformer, SimpleTimeTransformer
+from duetable.src.transformers import SimpleTransposeTransformer, SimpleTimeTransformer, MidiRangeTransformer
 
 
 class DuetableThreadPoolExecutor(ThreadPoolExecutor):
@@ -83,7 +83,12 @@ class StreamAudioToMidi:
         self.thread_pool_executor = DuetableThreadPoolExecutor(max_workers=1)
         self.debug_output_to_midi = False
 
-        self.sequence_player = SequencePlayer(get_elektron_outport())
+        self.sequence_player = SequencePlayer(
+            get_elektron_outport(),
+            loop=settings.loop_playback,
+            bpm=settings.bpm,
+            lower_meter=settings.lower_meter
+        )
         self._is_once_recorded = False
 
     def read(self):
@@ -244,7 +249,10 @@ class StreamAudioToMidi:
                 regenerated_buffer = transformer.transform(regenerated_buffer)
 
                 # add modified buffer to the player
-        self.sequence_player.add_generator_bars_notes(regenerated_buffer, reset=not self.settings.append_to_play_buffer)
+        self.sequence_player.add_generator_bars_notes(
+            regenerated_buffer,
+            reset=not self.settings.append_to_play_buffer
+        )
 
         if self.debug_output_to_midi:
             self._buffer_to_midi_obj(buffer, tempo_in_bpm)
@@ -303,9 +311,15 @@ warnings.filterwarnings('ignore')
 settings = DuetableSettings()
 settings.buffer_length = 12
 settings.buffer_time = 4.0
-settings.recording_strategy = RecordingStrategy.TIME
+settings.recording_strategy = RecordingStrategy.NOTES_ONCE
 settings.record_when_playing = False
 settings.append_to_play_buffer = False
+
+settings.upper_meter = 1
+settings.lower_meter = 2
+settings.bpm = 60
+
+settings.loop_playback = False
 
 stream_2_midi = StreamAudioToMidi(
     # midi converter
@@ -320,13 +334,14 @@ stream_2_midi = StreamAudioToMidi(
     # device_name="U46",
 
     # detected midi regenerator
-    regenerator=HttpMuptRegenerator(),
-    # regenerator=MuptWithMarkovChainRegenerator(),
+    # regenerator=HttpMuptRegenerator(),
+    regenerator=MuptWithMarkovChainRegenerator(),
 
     # post transformers
     transformations=[
         # SimpleTransposeTransformer(lambda: random.randint(-12, 12)),
         # SimpleTimeTransformer(lambda: random.randint(5, 35)/10)
+        MidiRangeTransformer(from_midi_no=26, to_midi_no=90)
     ]
 )
 stream_2_midi.read()

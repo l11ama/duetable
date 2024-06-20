@@ -19,6 +19,7 @@ class DuetableSettings:
         self._upper_meter = 4
         self._lower_meter = 4
         self._bpm = 120
+        self._loop_playback = False
 
     @property
     def buffer_time(self):
@@ -83,3 +84,11 @@ class DuetableSettings:
     @bpm.setter
     def bpm(self, value):
         self._bpm = value
+
+    @property
+    def loop_playback(self):
+        return self._loop_playback
+
+    @loop_playback.setter
+    def loop_playback(self, value):
+        self._loop_playback = value

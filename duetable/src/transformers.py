@@ -57,3 +57,35 @@ class SimpleTimeTransformer(MidiBufferPostTransformation):
         return new_sequence
 
 
+class MidiRangeTransformer(MidiBufferPostTransformation):
+
+    def __init__(self, from_midi_no, to_midi_no):
+        self.from_midi_no = from_midi_no
+        self.to_midi_no = to_midi_no
+
+    def transform(self, sequence: List[tuple[str, int, int, int]]) -> List[tuple[str, int, int, int]]:
+        if not sequence:
+            return sequence
+
+        new_sequence = []
+        for seq in sequence:
+            midi_no = seq[1]
+
+            if midi_no > self.to_midi_no:
+                midi_no = self.to_midi_no
+
+            if midi_no < self.from_midi_no:
+                midi_no = self.from_midi_no
+
+            new_sequence.append(
+                (
+                    MIDI_DATA_BY_NO[midi_no]['name'],
+                    midi_no,
+                    seq[2],
+                    seq[3]
+                )
+            )
+
+        return new_sequence
+
+

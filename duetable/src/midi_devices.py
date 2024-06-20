@@ -12,8 +12,8 @@ def _log_input_output_devices():
 _log_input_output_devices()
 
 
-# output_device = 'Elektron Model:Cycles'
-output_device = 'Duetable Bus 1'
+output_device = 'Elektron Model:Cycles'
+# output_device = 'Duetable Bus 1'
 
 _elektron_outport = None
 try:

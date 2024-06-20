@@ -193,3 +193,22 @@ MIDI_NO_TO_ABC = {
     120: "c''''''", 121: "^c''''''", 122: "d''''''", 123: "^d''''''", 124: "e''''''", 125: "f''''''", 126: "^f''''''",
     127: "g''''''"
 }
+
+
+def note_length_in_seconds(tempo, lower_meter) -> float:
+    quarter_note = 60 / tempo
+
+    if lower_meter == 1:
+        note_length = quarter_note * 4
+    elif lower_meter == 2:
+        note_length = quarter_note * 2
+    elif lower_meter == 4:
+        note_length = quarter_note
+    elif lower_meter == 8:
+        note_length = quarter_note / 2
+    elif lower_meter == 16:
+        note_length = quarter_note / 4
+    else:
+        raise ValueError(f'Wrong lower meter value: {lower_meter}!')
+
+    return note_length

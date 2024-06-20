@@ -4,15 +4,19 @@ from threading import Thread
 
 import mido
 
+from duetable.src.midi_utils import note_length_in_seconds
+
 
 class SequencePlayer(Thread):
 
-    def __init__(self, output_midi_device):
+    def __init__(self, output_midi_device, loop=False, bpm=120, lower_meter=4):
         super(SequencePlayer, self).__init__(name="SequencePlayer")
         self._output_midi_device = output_midi_device
         self._midi_notes_sequence = []
 
-        self.loop = False  # FIXME move to settings
+        self.loop = loop
+        self.bpm = bpm
+        self.lower_meter = lower_meter
 
         self.daemon = True
         self.start()
@@ -59,6 +63,7 @@ class SequencePlayer(Thread):
                 else:
                     if note[3] > 0:  # can be negative due to trimming if TIME strategy of recorded buffer
                         time.sleep(note[3])
+                # time.sleep(note_length_in_seconds(self.bpm, self.lower_meter))
 
                 current_note_idx += 1
                 if current_note_idx >= len(self._midi_notes_sequence):
