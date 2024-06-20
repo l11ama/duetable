@@ -296,7 +296,7 @@ stream_2_midi = StreamAudioToMidi(
 
     # post transformers
     transformations=[
-        # SimpleTransposeTransformer(lambda: random.randint(-12, 12))
+        # SimpleTransposeTransformer(lambda: random.randint(-12, 12)),
         # SimpleTimeTransformer(lambda: random.randint(5, 35)/10)
     ]
 )
