@@ -21,10 +21,10 @@ class HttpMuptRegenerator(MidiBufferRegenerator):
     def regenerate_sequence(self, sequence: List[tuple[str, int, int, int]], settings: DuetableSettings) -> List[tuple[str, int, int, int]]:
         new_abc_score = self._mupt_connector.generate_new_abc_score(
             generate_abc_from_sequence(sequence, settings),
-            n_bars=4,
-            temperature=0.7,
-            n_samples=5,
-            model="small"
+            n_bars=settings.n_bars,
+            temperature=settings.temperature,
+            n_samples=8,
+            model=settings.model_size
         )
         if not new_abc_score:
             print('WARN: Could not generate new ABC score, returning original')

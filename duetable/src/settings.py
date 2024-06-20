@@ -19,6 +19,9 @@ class DuetableSettings:
         self._upper_meter = 4
         self._lower_meter = 4
         self._bpm = 120
+        self._n_bars = 2
+        self._temperature = 1.0
+        self._model_size = "large"
 
     @property
     def buffer_time(self):
@@ -83,3 +86,27 @@ class DuetableSettings:
     @bpm.setter
     def bpm(self, value):
         self._bpm = value
+
+    @property
+    def n_bars(self):
+        return self._n_bars
+
+    @n_bars.setter
+    def n_bars(self, value):
+        self._n_bars = value
+
+    @property
+    def temperature(self):
+        return self._temperature
+
+    @temperature.setter
+    def temperature(self, value):
+        self._temperature = value
+
+    @property
+    def model_size(self):
+        return self._model_size
+
+    @model_size.setter
+    def model_size(self, value):
+        self._model_size = value
