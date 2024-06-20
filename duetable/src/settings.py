@@ -4,6 +4,8 @@ from enum import Enum
 class RecordingStrategy(Enum):
     NOTES = 'notes'
     TIME = 'time'
+    NOTES_ONCE = 'notes_once'
+    TIME_ONCE = 'time_once'
 
 
 class DuetableSettings:

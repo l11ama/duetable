@@ -17,7 +17,7 @@ from duetable.src.audio_to_midi_spoti import AudioToMidiWithSpotify
 from duetable.src.midi_devices import get_elektron_outport
 from duetable.src.interfaces import AudioToMidi, MidiBufferRegenerator, MidiBufferPostTransformation
 from duetable.src.midi_utils import MIDI_DATA_BY_NO
-from duetable.src.regenerators import DummyRegenerator, HttpMuptRegenerator
+from duetable.src.regenerators import DummyRegenerator, HttpMuptRegenerator, MuptWithMarkovChainRegenerator
 from duetable.src.sequence_player import SequencePlayer
 from duetable.src.settings import DuetableSettings, RecordingStrategy
 from duetable.src.transformers import SimpleTransposeTransformer, SimpleTimeTransformer
@@ -84,6 +84,7 @@ class StreamAudioToMidi:
         self.debug_output_to_midi = False
 
         self.sequence_player = SequencePlayer(get_elektron_outport())
+        self._is_once_recorded = False
 
     def read(self):
         start_time = time()
@@ -95,6 +96,12 @@ class StreamAudioToMidi:
 
         if self.settings.recording_strategy == RecordingStrategy.TIME:
             stop_recording_condition = lambda: time() - start_time >= self.settings.buffer_time
+
+        if self.settings.recording_strategy == RecordingStrategy.TIME_ONCE:
+            stop_recording_condition = lambda: self._is_time_once_executed(start_time)
+
+        if self.settings.recording_strategy == RecordingStrategy.NOTES_ONCE:
+            stop_recording_condition = lambda: self._is_note_once_executed()
 
         if not stop_recording_condition:
             raise ValueError('Unknown recording strategy')
@@ -198,7 +205,28 @@ class StreamAudioToMidi:
 
                 self.thread_pool_executor.submit(self._process_buffer, self.buffer)
 
-                self.buffer = []
+                if self.settings.recording_strategy not in (RecordingStrategy.TIME_ONCE, RecordingStrategy.NOTES_ONCE):
+                    self.buffer = []
+
+    def _is_time_once_executed(self, start_time):
+        if time() - start_time >= self.settings.buffer_time and not self._is_once_recorded:
+            self._is_once_recorded = True
+            return True
+
+        if self._is_once_recorded:
+            return True
+
+        return False
+
+    def _is_note_once_executed(self):
+        if len(self.buffer) == self.settings.buffer_length and not self._is_once_recorded:
+            self._is_once_recorded = True
+            return True
+
+        if self._is_once_recorded:
+            return True
+
+        return False
 
     def _process_buffer(self, buffer):
         print("Processing buffer:")
@@ -273,7 +301,7 @@ class StreamAudioToMidi:
 warnings.filterwarnings('ignore')
 
 settings = DuetableSettings()
-settings.buffer_length = 4
+settings.buffer_length = 12
 settings.buffer_time = 4.0
 settings.recording_strategy = RecordingStrategy.TIME
 settings.record_when_playing = False
@@ -293,6 +321,7 @@ stream_2_midi = StreamAudioToMidi(
 
     # detected midi regenerator
     regenerator=HttpMuptRegenerator(),
+    # regenerator=MuptWithMarkovChainRegenerator(),
 
     # post transformers
     transformations=[
