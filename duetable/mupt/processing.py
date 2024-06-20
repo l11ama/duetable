@@ -79,17 +79,25 @@ def decode(piece, n_bars=2):
             # assert len(lst) == length
             pass
 
-    dec_piece += heads
+    key_split = heads.split("K:")
+    assert len(key_split) > 0
+    before_key = key_split[0]
+    print(key_split)
+    key = key_split[1].split("<n>")[0]
+    dec_piece += before_key + "K:"
+    dec_piece += key + "<n>"
+
+
+    print(all_bar_lst)
     for i in range(len(all_bar_lst)):
-        if len(all_bar_lst) > 1:
-            dec_piece += f'V:{i + 1}\n'
+        # if len(all_bar_lst) > 1:
+        #     dec_piece += f'V:{i + 1}\n'
         dec_piece += ''.join(all_bar_lst[i][:n_bars])
         dec_piece += '\n'
     # Remove redundant spaces.
     dec_piece = re.sub(' {2,}', ' ', dec_piece)
 
     return dec_piece
-
 
 def validate_abc(abc_string):
     abc_parser = m21.converter.parse(abc_string, format='abc')

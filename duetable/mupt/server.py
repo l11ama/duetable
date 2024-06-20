@@ -60,11 +60,13 @@ async def generate_text(request: TextGenerationRequest):
     for output in outputs:
         print(output)
         try:
-            res = decode(output, n_bars=request.n_bars).replace('<n>', '\n')
-            res = res.replace('|:', '\n')
-            res = res.replace(']', '')
 
+            res = decode(output, n_bars=request.n_bars)
+            res = res.replace('<n>', '\n')
+            res = res.replace('|:', '|')
+            res = res.replace(']', '')
             print(res)
+
             if validate_abc(res):
                 logging.debug("Valid")
                 correct_outputs.append(res)
