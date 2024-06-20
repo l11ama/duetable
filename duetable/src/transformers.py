@@ -55,5 +55,41 @@ class SimpleTimeTransformer(MidiBufferPostTransformation):
             )
 
         return new_sequence
+class FixedRangeTransformer(MidiBufferPostTransformation):
+# Creates a correlation between Input data and output, pitch-wise
+    def __init__(self, input_range_offset: int, number_of_notes: int):
+        self.input_range_offset = input_range_offset
+        self.number_of_notes = number_of_notes
+    def transform(self, sequence: List[tuple[str, int, int, int]]) -> List[tuple[str, int, int, int]]:
+        if not sequence:
+            return sequence
+        if len(sequence) <= self.number_of_notes:
+            return sequence
+        start_notes = sequence[:self.number_of_notes]
+        pitches = [seq[1] for seq in start_notes]
+        pitches_range = min(pitches) - self.input_range_offset, max(pitches) + self.input_range_offset
+        new_sequence = []
+        for seq in sequence:
+            if pitches_range[0] <= seq[1] <= pitches_range[1]:
+                new_sequence.append(seq)
+        return new_sequence
 
+
+class ApproachNotesTransformer(MidiBufferPostTransformation):
+# Creates an approach note for each AI generated note.
+
+    def transform(self, sequence: List[tuple[str, int, int, int]]) -> List[tuple[str, int, int, int]]:
+        if not sequence:
+            return sequence
+        new_sequence = []
+        for seq in sequence:
+            new_sequence.append(
+                (
+                    MIDI_DATA_BY_NO[seq[1] - 1]['name'],
+                    seq[1] - 1,
+                    seq[2],
+                    seq[3]))
+            new_sequence.append(seq)
+
+        return new_sequence
 
