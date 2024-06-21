@@ -28,7 +28,7 @@ for PyAudio please do:
 
 * `brew install portaudio`
 
-# Artist configuration
+# Configuration
 
 Multiple parameters can be provided on runtime to configure the system. These are:
 * `recording_strategy` - how the midi buffer is filled. Options are:
@@ -72,7 +72,7 @@ Low level settings:
 * `win_s` - window size for audio-to-midi conversion, default 1024
 * `hop_s` - hop size for audio-to-midi conversion and audio in, default 128
 
-# Realtime midi detection
+# Application
 
 We have implemented three different Audio To Midi wrappers with usage of API from Essentia, Aubio and Basic Pitch (Spotify).
 Essentia and Basic Pitch are not good for realtime applications. Which one to use is subject of configuration. Default is: `AudioToMidiWithAubio`
