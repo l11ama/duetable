@@ -41,6 +41,7 @@ Multiple parameters can be provided on runtime to configure the system. These ar
 * `upper_meter` - upper meter for the regenerated melody
 * `lower_meter` - lower meter for the regenerated melody 
 * `bpm` - tempo for the regenerated melody
+* `sleep_with_note` - specify if the midi player has to sleep with the note duration or time calculated from tempo and meter
 * `regenerator` - specify method for regenerating recorded midi notes, possible values are:
   * `HttpMuptRegenerator` - regenerates melody using MUPT API
   * `MuptWithMarkovChainRegenerator` - first regeneration is executed with MUTP API and all other iterations with MarkovChain
@@ -71,6 +72,8 @@ Low level settings:
 * `sample_rate` - sample rate for audio-to-midi conversion and audio in, default 44100
 * `win_s` - window size for audio-to-midi conversion, default 1024
 * `hop_s` - hop size for audio-to-midi conversion and audio in, default 128
+
+Please check files: `act_1.py`, `act_2.py`, `act_3.py`, `act_3_1.py` which were used during the demo performance for examples of usage.
 
 # Application
 

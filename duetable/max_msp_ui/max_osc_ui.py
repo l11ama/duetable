@@ -90,5 +90,8 @@ duetable = Duetable(
     transformations=transformers
 )
 
+duetable.daemon = True
+duetable.start()
+
 print('=================== DONE ===================')
 server.serve_forever()

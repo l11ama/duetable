@@ -65,7 +65,7 @@ class Duetable(Thread):
         if input_device_index is None:
             raise ValueError(f"Device {device_name} not found!")
 
-        print(f'Using: {device_name} with idx={input_device_index}')
+        print(f'Using: {device_name} with idx={input_device_index}', flush=True)
 
         self._stream = self._audio.open(
             format=pyaudio.paFloat32,
@@ -87,8 +87,8 @@ class Duetable(Thread):
         )
         self._is_once_recorded = False
 
-        self.daemon = True
-        self.start()
+        # self.daemon = True
+        # self.start()
 
     def run(self):
         """
@@ -150,7 +150,7 @@ class Duetable(Thread):
             )
 
             if midi_note != 0:
-                print(f"Detected note: {midi_note}/{MIDI_DATA_BY_NO[midi_note]['name']}, velocity: {velocity}")
+                print(f"Detected note: {midi_note}/{MIDI_DATA_BY_NO[midi_note]['name']}, velocity: {velocity}", flush=True)
 
                 # appending detected noted into the buffer
                 has_prev_note = len(self.buffer) > 0
