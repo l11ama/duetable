@@ -67,7 +67,7 @@ duetable = Duetable(
     settings=settings,
 
     # audio in
-    device_name="U46",
+    # device_name="U46",
 
     # detected midi regenerator
     regenerator=regenerator,
