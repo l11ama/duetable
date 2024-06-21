@@ -1,11 +1,11 @@
 # ======================================================
 # ======================================================
 # ======================================================
-from duetable.src.audio_to_midi_aub import AudioToMidiWithAubio
-from duetable.src.midi_devices import log_input_output_devices, open_output
-from duetable.src.regenerators import HttpMuptRegenerator
-from duetable.src.settings import DuetableSettings, RecordingStrategy
-from duetable.src.stream_audio_to_midi import StreamAudioToMidi
+from audio_to_midi_aub import AudioToMidiWithAubio
+from midi_devices import log_input_output_devices, open_output
+from regenerators import HttpMuptRegenerator
+from settings import DuetableSettings, RecordingStrategy
+from duetable import Duetable
 
 log_input_output_devices()
 # open_output('Elektron Model:Cycles')
@@ -42,7 +42,7 @@ transformers = [
 
 # ====================================================== RUNNER ======================================================
 
-stream_2_midi = StreamAudioToMidi(
+stream_2_midi = Duetable(
     # midi converter
     converter=AudioToMidiWithAubio(down_sample=1),
     # hop_s=10*2048,  # set for Spotify due to natural network nature for prediction, comment out for Aubio

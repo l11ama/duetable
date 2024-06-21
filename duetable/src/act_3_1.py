@@ -3,13 +3,13 @@
 # ======================================================
 import random
 
-from duetable.src.audio_to_midi_aub import AudioToMidiWithAubio
-from duetable.src.midi_devices import log_input_output_devices, open_output
-from duetable.src.regenerators import HttpMuptRegenerator, MuptWithMarkovChainRegenerator, DummyRegenerator, \
+from audio_to_midi_aub import AudioToMidiWithAubio
+from midi_devices import log_input_output_devices, open_output
+from regenerators import HttpMuptRegenerator, MuptWithMarkovChainRegenerator, DummyRegenerator, \
     MarkovChainRegenerator
-from duetable.src.settings import DuetableSettings, RecordingStrategy
-from duetable.src.stream_audio_to_midi import StreamAudioToMidi
-from duetable.src.transformers import RandomMuteTransformer, MidiRangeTransformer
+from settings import DuetableSettings, RecordingStrategy
+from duetable import Duetable
+from transformers import RandomMuteTransformer, MidiRangeTransformer
 
 log_input_output_devices()
 open_output('Elektron Model:Cycles')
@@ -29,12 +29,12 @@ settings.append_to_play_buffer = False
 
 settings.upper_meter = 1
 settings.lower_meter = 1
-settings.bpm = 20
+settings.bpm = 80
 settings.sleep_with_note = False
 
 settings.n_bars = 4
-settings.temperature = 0.8
-settings.model_size = "large"
+settings.temperature = 0.9
+settings.model_size = "small"
 settings.mel_key = "Cm"
 
 settings.loop_playback = True
@@ -45,15 +45,15 @@ regenerator = MuptWithMarkovChainRegenerator()
 # regenerator = DummyRegenerator()
 
 transformers = [
-    RandomMuteTransformer(lambda: random.choice([True, False, False])),
+    # RandomMuteTransformer(lambda: random.choice([True, False, False])),
     # SimpleTransposeTransformer(lambda: random.randint(-12, 12)),
     # SimpleTimeTransformer(lambda: random.randint(5, 35)/10)
-    MidiRangeTransformer(from_midi_no=26, to_midi_no=60)
+    MidiRangeTransformer(from_midi_no=26, to_midi_no=120)
 ]
 
 # ====================================================== RUNNER ======================================================
 
-stream_2_midi = StreamAudioToMidi(
+stream_2_midi = Duetable(
     # midi converter
     converter=AudioToMidiWithAubio(down_sample=1),
     # hop_s=10*2048,  # set for Spotify due to natural network nature for prediction, comment out for Aubio

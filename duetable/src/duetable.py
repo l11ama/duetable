@@ -1,6 +1,7 @@
 import warnings
 from concurrent.futures import ThreadPoolExecutor
 from pprint import pprint
+from threading import Thread
 from time import time
 from typing import List
 
@@ -11,11 +12,11 @@ from miditoolkit.midi import containers as ct
 from mido import second2tick, bpm2tempo
 from numpy import median, diff
 
-from duetable.src.interfaces import AudioToMidi, MidiBufferRegenerator, MidiBufferPostTransformation
-from duetable.src.midi_utils import MIDI_DATA_BY_NO
-from duetable.src.regenerators import DummyRegenerator
-from duetable.src.sequence_player import SequencePlayer
-from duetable.src.settings import DuetableSettings, RecordingStrategy
+from interfaces import AudioToMidi, MidiBufferRegenerator, MidiBufferPostTransformation
+from midi_utils import MIDI_DATA_BY_NO
+from regenerators import DummyRegenerator
+from sequence_player import SequencePlayer
+from settings import DuetableSettings, RecordingStrategy
 
 
 class DuetableThreadPoolExecutor(ThreadPoolExecutor):
@@ -27,7 +28,7 @@ class DuetableThreadPoolExecutor(ThreadPoolExecutor):
         return self._work_queue.qsize()
 
 
-class StreamAudioToMidi:
+class Duetable(Thread):
 
     def __init__(
             self,
@@ -41,6 +42,7 @@ class StreamAudioToMidi:
             regenerator: MidiBufferRegenerator = DummyRegenerator(),
             transformations: List[MidiBufferPostTransformation] = None
     ):
+        super(Duetable, self).__init__(name="Duetable App")
         self.settings = settings
         self.converter = converter
         self.regenerator = regenerator
@@ -85,7 +87,22 @@ class StreamAudioToMidi:
         )
         self._is_once_recorded = False
 
+        self.daemon = True
+
+    def run(self):
+        """
+        Main loop of the Duetable. Execute `read()` method.
+
+        :return:
+        """
+        self.read()
+
     def read(self):
+        """
+        Read data from the audio stream and run the processing based on the settings.
+
+        :return:
+        """
         start_time = time()
         duration = 0
 

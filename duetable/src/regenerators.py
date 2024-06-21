@@ -1,10 +1,10 @@
 from typing import List
 
-from duetable.src.abc_utils import generate_abc_from_sequence, generate_sequence_from_abc
-from duetable.src.interfaces import MidiBufferRegenerator
-from duetable.src.melody_markov_chain import MarkovRegenerator
-from duetable.src.mupt_connector import MuptConnector
-from duetable.src.settings import DuetableSettings
+from abc_utils import generate_abc_from_sequence, generate_sequence_from_abc
+from interfaces import MidiBufferRegenerator
+from melody_markov_chain import MarkovRegenerator
+from mupt_connector import MuptConnector
+from settings import DuetableSettings
 
 
 class DummyRegenerator(MidiBufferRegenerator):

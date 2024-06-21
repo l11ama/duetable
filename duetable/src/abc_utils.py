@@ -3,8 +3,8 @@ from typing import List
 
 from music21 import converter, note
 
-from duetable.src.midi_utils import MIDI_NO_TO_ABC
-from duetable.src.settings import DuetableSettings
+from midi_utils import MIDI_NO_TO_ABC
+from settings import DuetableSettings
 
 
 def generate_abc_from_sequence(sequence: List[tuple[str, int, int, int]], settings: DuetableSettings) -> str:

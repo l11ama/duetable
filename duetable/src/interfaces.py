@@ -1,6 +1,6 @@
 from typing import List
 
-from duetable.src.settings import DuetableSettings
+from settings import DuetableSettings
 
 
 class AudioToMidi:

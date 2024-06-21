@@ -1,6 +1,6 @@
 from typing import List, Callable
-from duetable.src.interfaces import MidiBufferPostTransformation
-from duetable.src.midi_utils import MIDI_DATA_BY_NO
+from interfaces import MidiBufferPostTransformation
+from midi_utils import MIDI_DATA_BY_NO
 
 
 class SimpleTransposeTransformer(MidiBufferPostTransformation):
