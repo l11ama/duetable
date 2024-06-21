@@ -48,7 +48,8 @@ def regenerator_handler(unused_addr, args, value):
 
 
 dispatcher = dispatcher.Dispatcher()
-dispatcher.map("/RegeneratorNo", regenerator_handler, "RegeneratorType")
+dispatcher.map("/RegeneratorNo", parameter_handler, "RegeneratorType")
+dispatcher.map("/RecordingStrategy", parameter_handler, "Recording Strategy")
 
 ip = "127.0.0.1"  # Localhost
 port = 12345  # Port to listen on
