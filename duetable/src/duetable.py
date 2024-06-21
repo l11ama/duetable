@@ -88,6 +88,7 @@ class Duetable(Thread):
         self._is_once_recorded = False
 
         self.daemon = True
+        self.start()
 
     def run(self):
         """

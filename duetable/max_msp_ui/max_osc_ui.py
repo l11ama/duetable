@@ -5,8 +5,13 @@ from pythonosc import osc_server
 
 from audio_to_midi_aub import AudioToMidiWithAubio
 from duetable import Duetable
+from midi_devices import log_input_output_devices, open_output
 from regenerators import HttpMuptRegenerator, MarkovChainRegenerator, MuptWithMarkovChainRegenerator
 from settings import DuetableSettings, RecordingStrategy
+
+
+log_input_output_devices()
+open_output('Duetable Bus 1')
 
 settings = DuetableSettings()
 
@@ -36,7 +41,11 @@ transformers = [
 
 
 def regenerator_handler(unused_addr, args, value):
-    global regenerator
+    global duetable
+    regenerator = None
+
+    print(f"############################ > Trying to set new RegeneratorNo: {value}")
+
     if value == 0:
         regenerator = HttpMuptRegenerator()
     elif value == 1:
@@ -45,6 +54,11 @@ def regenerator_handler(unused_addr, args, value):
         regenerator = MuptWithMarkovChainRegenerator()
     else:
         logging.error("Bad regenerator")
+
+    if regenerator:
+        duetable.regenerator = regenerator
+    else:
+        logging.warning("Could not set regenerator!")
 
 
 dispatcher = dispatcher.Dispatcher()
@@ -75,7 +89,6 @@ duetable = Duetable(
     # post transformers
     transformations=transformers
 )
-duetable.start()
-duetable.run()
 
+print('=================== DONE ===================')
 server.serve_forever()
