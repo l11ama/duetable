@@ -1,4 +1,5 @@
 import random
+import time
 
 from music21 import scale
 
@@ -50,5 +51,7 @@ class AudioToMidiDummy(AudioToMidi):
         if not s:
             print(f'WARN: could not create scale, default to major!')
             s = scale.MajorScale(scale_root_note)
+
+        time.sleep(0.2)
 
         return s.getPitches(f'{random.choice(self._notes)}{random.randint(1, 8)}')[0].midi, random.randint(1, 127)
