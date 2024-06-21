@@ -80,6 +80,8 @@ Please check files: `act_1.py`, `act_2.py`, `act_3.py`, `act_3_1.py` which were 
 We have implemented three different Audio To Midi wrappers with usage of API from Essentia, Aubio and Basic Pitch (Spotify).
 Essentia and Basic Pitch are not good for realtime applications. Which one to use is subject of configuration. Default is: `AudioToMidiWithAubio`
 
+![Alt text](./docs/diagram.png "Duetable app diagram")
+
 Example configuration for stream input signal to audio:
 ```python
 settings = DuetableSettings()
