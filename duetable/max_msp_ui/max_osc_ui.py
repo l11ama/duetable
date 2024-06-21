@@ -6,7 +6,7 @@ from pythonosc import osc_server
 from audio_to_midi_aub import AudioToMidiWithAubio
 from duetable import Duetable
 from midi_devices import log_input_output_devices, open_output
-from regenerators import HttpMuptRegenerator, MarkovChainRegenerator, MuptWithMarkovChainRegenerator
+from regenerators import HttpMuptRegenerator, MarkovChainRegenerator, MuptWithMarkovChainRegenerator, DummyRegenerator
 from settings import DuetableSettings, RecordingStrategy
 
 
@@ -40,11 +40,10 @@ transformers = [
 ]
 
 
-def regenerator_handler(unused_addr, args, value):
+def change_regenerator(unused_addr, args, value):
+    print(f">>>>>> UI: Regenerator: {value}")
     global duetable
     regenerator = None
-
-    print(f"############################ > Trying to set new RegeneratorNo: {value}")
 
     if value == 0:
         regenerator = HttpMuptRegenerator()
@@ -52,8 +51,8 @@ def regenerator_handler(unused_addr, args, value):
         regenerator = MarkovChainRegenerator()
     elif value == 2:
         regenerator = MuptWithMarkovChainRegenerator()
-    else:
-        logging.error("Bad regenerator")
+    elif value == 3:
+        regenerator = DummyRegenerator()
 
     if regenerator:
         duetable.regenerator = regenerator
@@ -61,9 +60,18 @@ def regenerator_handler(unused_addr, args, value):
         logging.warning("Could not set regenerator!")
 
 
+def change_recording_strategy(unused_addr, args, value):
+    print(f">>>>>> UI: Recording Strategy: {value}")
+    if value == 0:
+        settings.recording_strategy = RecordingStrategy.TIME
+
+    if value == 1:
+        settings.recording_strategy = RecordingStrategy.NOTES
+
+
 dispatcher = dispatcher.Dispatcher()
-dispatcher.map("/RegeneratorNo", parameter_handler, "RegeneratorType")
-dispatcher.map("/RecordingStrategy", parameter_handler, "Recording Strategy")
+dispatcher.map("/RegeneratorNo", change_regenerator, "RegeneratorType")
+dispatcher.map("/RecordingStrategy", change_recording_strategy, "Recording Strategy")
 
 ip = "127.0.0.1"  # Localhost
 port = 12345  # Port to listen on
