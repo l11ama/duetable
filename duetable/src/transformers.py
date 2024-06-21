@@ -82,7 +82,7 @@ class RandomMuteTransformer(MidiBufferPostTransformation):
 
 class FixedRangeTransformer(MidiBufferPostTransformation):
     """
-    # Creates a correlation between Input data and output, pitch-wise
+    Creates a correlation between Input data and output, pitch-wise
     """
 
     def __init__(self, input_range_offset: int, number_of_notes: int):
@@ -106,7 +106,7 @@ class FixedRangeTransformer(MidiBufferPostTransformation):
 
 class ApproachNotesTransformer(MidiBufferPostTransformation):
     """
-    Creates an approach note for each AI generated note.
+    Creates an approach note for each note in melody.
     """
 
     def transform(self, sequence: List[tuple[str, int, int, int]]) -> List[tuple[str, int, int, int]]:
