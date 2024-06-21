@@ -31,7 +31,7 @@ settings.model_size = "large"
 settings.mel_key = "C"
 
 settings.loop_playback = False
-settings.sleep_with_note = False
+settings.sleep_with_note = True
 
 regenerator = HttpMuptRegenerator()
 # regenerator=MuptWithMarkovChainRegenerator()
