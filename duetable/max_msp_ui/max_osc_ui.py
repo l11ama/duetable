@@ -22,8 +22,8 @@ settings.record_when_playing = False
 settings.append_to_play_buffer = False
 
 settings.upper_meter = 4
-settings.lower_meter = 4
-settings.bpm = 60
+settings.lower_meter = 8
+settings.bpm = 120
 
 settings.n_bars = 2
 settings.temperature = 1.0
@@ -31,6 +31,7 @@ settings.model_size = "large"
 settings.mel_key = "C"
 
 settings.loop_playback = False
+settings.sleep_with_note = False
 
 regenerator = HttpMuptRegenerator()
 # regenerator=MuptWithMarkovChainRegenerator()

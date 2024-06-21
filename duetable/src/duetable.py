@@ -83,7 +83,8 @@ class Duetable(Thread):
         self.sequence_player = SequencePlayer(
             loop=settings.loop_playback,
             bpm=settings.bpm,
-            lower_meter=settings.lower_meter
+            lower_meter=settings.lower_meter,
+            sleep_with_note=settings.sleep_with_note,
         )
         self._is_once_recorded = False
 
