@@ -96,6 +96,14 @@ app.read()
 By default data will be read from build in microphone = `'MacBook Pro Microphone'`.
 To adjust please set correct `device_name`. On start, stream class log to console all possible input devices.
 
+# Run
+
+Running app from the console together with a server for MAX Msp UI server:
+```shell
+cd duetable/duetable/
+PYTHONPATH=src poetry run python max_msp_ui/max_osc_ui.py 
+```
+
 # MUPT API specification
 Endpoint: `POST` `http://92.38.241.195:2345/generate/`
 
