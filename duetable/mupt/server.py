@@ -24,7 +24,7 @@ class TextGenerationRequest(BaseModel):
     prefix: str
     n_bars: int = 3
     temperature = 1.0
-    n_samples = 8
+    n_samples = 4
     model = "large"
 
 
@@ -48,7 +48,7 @@ async def generate_text(request: TextGenerationRequest):
     # Generate text
     outputs = model.generate(
         inputs.input_ids,
-        max_length=inputs.input_ids.shape[1] + request.n_bars * 16,
+        max_length=inputs.input_ids.shape[1] + request.n_bars * 32,
         temperature=request.temperature,
         num_return_sequences=request.n_samples,
         do_sample=True
@@ -65,7 +65,9 @@ async def generate_text(request: TextGenerationRequest):
             res = res.replace('<n>', '\n')
             res = res.replace('|:', '|')
             res = res.replace(']', '')
-            print(res)
+            eos_split = res.split('<eos>')
+            if len(eos_split) > 0:
+                res = eos_split[0]
 
             if validate_abc(res):
                 logging.debug("Valid")
