@@ -15,6 +15,7 @@ pyaudio = "^0.2.14"
 miditoolkit = "^1.0.1"
 python-rtmidi = "^1.5.8"
 music21 = "^9.1.0"
+python-osc = "^1.8.3"
 
 
 [build-system]
