@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #343a40;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #343a40;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        td {
+            background-color: #ffffff;
+        }
+        tr:nth-child(even) td {
+            background-color: #f2f2f2;
+        }
+        audio {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Get music melody modification strategies</h1>
+     <table>
+        <caption style="caption-side: top; text-align: center; font-size: 1.5em; padding: 10px; color: #495057;">Song example:  Lo Ta-yu - Childhood</caption>
+        <tr>
+            <th>Conditioning type</th>
+            <th>Condition Audio</th>
+            <th>Modified audio</th>
+        </tr>
+         <tr>
+            <td colspan="4">Keep note in lead melody with certain probability</td>
+         </tr>
+         <tr>
+            <td>Chords+lead+guitar, probability = 0.5</td>
+            <td><audio controls>
+                <source src="childhood/lg.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/clg2l-part-100steps_05prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </tr>
+         <tr>
+            <td>Chords+lead, probability = 0.5</td>
+            <td><audio controls>
+                <source src="childhood/l.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/l2l-part-100steps_05prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </tr>
+         <tr>
+            <td>Chords+lead+guitar, probability = 0.75</td>
+            <td><audio controls>
+                <source src="childhood/lg.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/clg2l-part-100steps_075prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </tr>
+         <tr>
+            <td>Chords+lead, probability = 0.75</td>
+            <td><audio controls>
+                <source src="childhood/lg.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/l2l-part-100steps_075prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </tr>
+         <tr>
+            <td>Chords+lead+guitar, probability = 0.9</td>
+            <td><audio controls>
+                <source src="childhood/lg.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/clg2l-part-100steps_09prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </tr>
+         <tr>
+            <td colspan="4">From lead melody</td>
+         </tr>
+         <tr>
+            <td>Chords, num_steps = 5</td>
+            <td>-</td>
+            <td><audio controls>
+                <source src="childhood/l2l-10steps-05prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            </td>
+        </tr>
+        <tr>
+            <td>Chords+lead, num_steps = 10</td>
+            <td><audio controls>
+                <source src="childhood/l.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/l2l-100steps_01prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            </td>
+        </tr>
+        <tr>
+            <td>Chords+lead, num_steps = 25</td>
+            <td><audio controls>
+                <source src="childhood/l.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/l2l-100steps_025prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            </td>
+        </tr>
+
+         <tr>
+            <td colspan="4">From lead and guitar</td>
+         </tr>
+        <tr>
+            <td>Chords+guitar, num_steps = 5</td>
+            <td><audio controls>
+                <source src="childhood/lg.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/lg2l-10steps-05prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </tr>
+        <tr>
+            <td>Chords+lead+guitar, num_steps = 25</td>
+            <td><audio controls>
+                <source src="childhood/lg.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/lg2l-100steps_025prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </tr>
+        <tr>
+            <td>Chords+lead+guitar, num_steps = 50</td>
+            <td><audio controls>
+                <source src="childhood/lg.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio></td>
+            <td><audio controls>
+                <source src="childhood/lg2l-100steps_05prob.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </tr>
+
+    </table>
+
+
+</body>
+</html>
