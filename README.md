@@ -28,6 +28,36 @@ for PyAudio please do:
 
 * `brew install portaudio`
 
+# Application
+
+We have implemented three different Audio To Midi wrappers with usage of API from Essentia, Aubio and Basic Pitch (Spotify).
+Essentia and Basic Pitch are not good for realtime applications. Which one to use is subject of configuration. Default is: `AudioToMidiWithAubio`
+
+![Alt text](./docs/diagram.png "Duetable app diagram")
+
+Example configuration for stream input signal to audio:
+```python
+settings = DuetableSettings()
+settings.buffer_length = 4
+app = Duetable(
+    converter=AudioToMidiWithAubio(down_sample=1),
+    settings=settings,
+    # device_name="U46",
+    regenerator=MuptRegenerator()
+)
+app.read()
+```
+
+By default data will be read from build in microphone = `'MacBook Pro Microphone'`.
+To adjust please set correct `device_name`. On start, stream class log to console all possible input devices.
+
+# Run
+
+Running app from the console together with a server for MAX Msp UI server:
+```shell
+poetry run python src/max_msp_ui/max_osc_ui.py 
+```
+
 # Configuration
 
 Multiple parameters can be provided on runtime to configure the system. These are:
@@ -75,39 +105,9 @@ Low level settings:
 
 Please check files: `act_1.py`, `act_2.py`, `act_3.py`, `act_3_1.py` which were used during the demo performance for examples of usage.
 
-# Application
-
-We have implemented three different Audio To Midi wrappers with usage of API from Essentia, Aubio and Basic Pitch (Spotify).
-Essentia and Basic Pitch are not good for realtime applications. Which one to use is subject of configuration. Default is: `AudioToMidiWithAubio`
-
-![Alt text](./docs/diagram.png "Duetable app diagram")
-
-Example configuration for stream input signal to audio:
-```python
-settings = DuetableSettings()
-settings.buffer_length = 4
-app = Duetable(
-    converter=AudioToMidiWithAubio(down_sample=1),
-    settings=settings,
-    # device_name="U46",
-    regenerator=HttpMuptRegenerator()
-)
-app.read()
-```
-
-By default data will be read from build in microphone = `'MacBook Pro Microphone'`.
-To adjust please set correct `device_name`. On start, stream class log to console all possible input devices.
-
-# Run
-
-Running app from the console together with a server for MAX Msp UI server:
-```shell
-cd duetable/duetable/
-PYTHONPATH=src poetry run python max_msp_ui/max_osc_ui.py 
-```
 
 # MUPT API specification
-Endpoint: `POST` `http://92.38.241.195:2345/generate/`
+Endpoint: `POST` `http://<SERVER_URL>/generate/`
 
 Request params:
 * `prefix` - start of the melody in ABC notation
