@@ -12,11 +12,11 @@ from miditoolkit.midi import containers as ct
 from mido import second2tick, bpm2tempo
 from numpy import median, diff
 
-from interfaces import AudioToMidi, MidiBufferRegenerator, MidiBufferPostTransformation
-from midi_utils import MIDI_DATA_BY_NO
-from regenerators import DummyRegenerator
-from sequence_player import SequencePlayer
-from settings import DuetableSettings, RecordingStrategy
+from duetable.interfaces import AudioToMidi, MidiBufferRegenerator, MidiBufferPostTransformation
+from duetable.midi_utils import MIDI_DATA_BY_NO
+from duetable.regenerators import DummyRegenerator
+from duetable.sequence_player import SequencePlayer
+from duetable.settings import DuetableSettings, RecordingStrategy
 
 
 class DuetableThreadPoolExecutor(ThreadPoolExecutor):

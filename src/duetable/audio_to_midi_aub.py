@@ -2,8 +2,8 @@ import aubio
 from mido import MidiFile, MidiTrack, bpm2tempo, MetaMessage, second2tick, Message
 from numpy import median, diff
 
-from interfaces import AudioToMidi
-from midi_utils import MIDI_DATA_BY_NO
+from duetable.interfaces import AudioToMidi
+from duetable.midi_utils import MIDI_DATA_BY_NO
 
 
 class AudioToMidiWithAubio(AudioToMidi):

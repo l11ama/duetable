@@ -3,7 +3,7 @@ from pprint import pprint
 import essentia.standard as estd
 import mido
 
-from interfaces import AudioToMidi
+from duetable.interfaces import AudioToMidi
 
 
 class AudioToMidiWithEssentia(AudioToMidi):

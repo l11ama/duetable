@@ -1,11 +1,11 @@
 # ======================================================
 # ======================================================
 # ======================================================
-from audio_to_midi_aub import AudioToMidiWithAubio
-from midi_devices import log_input_output_devices, open_output
-from regenerators import HttpMuptRegenerator
-from settings import DuetableSettings, RecordingStrategy
-from duetable import Duetable
+from duetable.audio_to_midi_aub import AudioToMidiWithAubio
+from duetable.midi_devices import log_input_output_devices, open_output
+from duetable.regenerators import MuptRegenerator
+from duetable.settings import DuetableSettings, RecordingStrategy
+from duetable.duetable import Duetable
 
 log_input_output_devices()
 # open_output('Elektron Model:Cycles')
@@ -29,12 +29,12 @@ settings.bpm = 120
 
 settings.n_bars = 2
 settings.temperature = 0.8
-settings.model_size = "large"
+settings.model_size = "small"
 settings.mel_key = "Gmin"
 
 settings.loop_playback = False
 
-regenerator = HttpMuptRegenerator()
+regenerator = MuptRegenerator()
 # regenerator=MuptWithMarkovChainRegenerator(),
 
 transformers = [

@@ -1,10 +1,10 @@
 from typing import List
 
-from abc_utils import generate_abc_from_sequence, generate_sequence_from_abc
-from interfaces import MidiBufferRegenerator
-from melody_markov_chain import MarkovRegenerator
-from mupt_connector import MuptConnector
-from settings import DuetableSettings
+from duetable.abc_utils import generate_abc_from_sequence, generate_sequence_from_abc
+from duetable.interfaces import MidiBufferRegenerator
+from duetable.melody_markov_chain import MarkovRegenerator
+from duetable.models.mupt.mupt_connector import HttpMuptConnector, MuptConnector
+from duetable.settings import DuetableSettings
 
 
 class DummyRegenerator(MidiBufferRegenerator):
@@ -13,10 +13,10 @@ class DummyRegenerator(MidiBufferRegenerator):
         return sequence
 
 
-class HttpMuptRegenerator(MidiBufferRegenerator):
+class MuptRegenerator(MidiBufferRegenerator):
 
-    def __init__(self):
-        self._mupt_connector = MuptConnector()
+    def __init__(self, local = True):
+        self._mupt_connector = MuptConnector() if local else HttpMuptConnector()
 
     def regenerate_sequence(self, sequence: List[tuple[str, int, int, int]], settings: DuetableSettings) -> List[tuple[str, int, int, int]]:
         new_abc_score = self._mupt_connector.generate_new_abc_score(
@@ -33,7 +33,7 @@ class HttpMuptRegenerator(MidiBufferRegenerator):
         return generate_sequence_from_abc(new_abc_score)
 
 
-class MuptWithMarkovChainRegenerator(HttpMuptRegenerator):
+class MuptWithMarkovChainRegenerator(MuptRegenerator):
 
     def __init__(self):
         super(MuptWithMarkovChainRegenerator, self).__init__()
