@@ -5,7 +5,7 @@ import wave
 from basic_pitch.commandline_printing import file_saved_confirmation
 from basic_pitch.inference import predict, build_output_path, OutputExtensions
 
-from interfaces import AudioToMidi
+from duetable.interfaces import AudioToMidi
 
 
 class AudioToMidiWithSpotify(AudioToMidi):

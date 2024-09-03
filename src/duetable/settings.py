@@ -22,7 +22,7 @@ class DuetableSettings:
         self._loop_playback = False
         self._n_bars = 2
         self._temperature = 1.0
-        self._model_size = "large"
+        self._model_size = "small"
         self._mel_key = "C"
         self._sleep_with_note = True
 

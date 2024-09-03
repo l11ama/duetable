@@ -3,11 +3,11 @@ import logging
 from pythonosc import dispatcher
 from pythonosc import osc_server
 
-from audio_to_midi_aub import AudioToMidiWithAubio
-from duetable import Duetable
-from midi_devices import log_input_output_devices, open_output
-from regenerators import HttpMuptRegenerator, MarkovChainRegenerator, MuptWithMarkovChainRegenerator, DummyRegenerator
-from settings import DuetableSettings, RecordingStrategy
+from duetable.audio_to_midi_aub import AudioToMidiWithAubio
+from duetable.duetable import Duetable
+from duetable.midi_devices import log_input_output_devices, open_output
+from duetable.regenerators import MuptRegenerator, MarkovChainRegenerator, MuptWithMarkovChainRegenerator, DummyRegenerator
+from duetable.settings import DuetableSettings, RecordingStrategy
 
 
 log_input_output_devices()
@@ -27,13 +27,13 @@ settings.bpm = 120
 
 settings.n_bars = 2
 settings.temperature = 1.0
-settings.model_size = "large"
+settings.model_size = "small"
 settings.mel_key = "C"
 
 settings.loop_playback = False
 settings.sleep_with_note = True
 
-regenerator = HttpMuptRegenerator()
+regenerator = MuptRegenerator()
 # regenerator=MuptWithMarkovChainRegenerator()
 
 transformers = [
@@ -47,7 +47,7 @@ def change_regenerator(unused_addr, args, value):
     regenerator = None
 
     if value == 0:
-        regenerator = HttpMuptRegenerator()
+        regenerator = MuptRegenerator()
     elif value == 1:
         regenerator = MarkovChainRegenerator()
     elif value == 2:

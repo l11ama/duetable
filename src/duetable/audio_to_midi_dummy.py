@@ -3,7 +3,7 @@ import time
 
 from music21 import scale
 
-from interfaces import AudioToMidi
+from duetable.interfaces import AudioToMidi
 
 
 class AudioToMidiDummy(AudioToMidi):

@@ -1,5 +1,5 @@
-from duetable.src.abc_utils import generate_sequence_from_abc
-from duetable.src.transformers import FixedRangeTransformer, ApproachNotesTransformer
+from duetable.abc_utils import generate_sequence_from_abc
+from duetable.transformations import FixedRangeTransformer, ApproachNotesTransformer
 
 
 def test_range_transform():

@@ -1,12 +1,9 @@
-import logging
-from typing import re
-
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import random
 
-from processing import decode, validate_abc
+from duetable.models.mupt.processing import decode, validate_abc
 import logging
 
 logging.basicConfig(level=logging.DEBUG)

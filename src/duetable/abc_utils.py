@@ -3,8 +3,8 @@ from typing import List
 
 from music21 import converter, note
 
-from midi_utils import MIDI_NO_TO_ABC
-from settings import DuetableSettings
+from duetable.midi_utils import MIDI_NO_TO_ABC
+from duetable.settings import DuetableSettings
 
 
 def generate_abc_from_sequence(sequence: List[tuple[str, int, int, int]], settings: DuetableSettings) -> str:
@@ -31,7 +31,7 @@ def generate_abc_from_sequence(sequence: List[tuple[str, int, int, int]], settin
             last_bar.append(('z', -1, 0, 0, midi_duration_to_abc_length(lower_meter)))
 
     # abc header
-    abc_notation = f"X: 1\nT: Duetable detected score\nL: 1/{settings.lower_meter}\n" \
+    abc_notation = f"X: 1\nL: 1/{settings.lower_meter}\n" \
                    f"Q: 1/4={settings.bpm}\nM: 4/4\nK: {settings.mel_key}\n"
 
     for bar in bars:

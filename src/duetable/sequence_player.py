@@ -2,8 +2,8 @@ import time
 from fractions import Fraction
 from threading import Thread
 
-from midi_devices import play_note_in_midi_devices
-from midi_utils import note_length_in_seconds
+from duetable.midi_devices import play_note_in_midi_devices
+from duetable.midi_utils import note_length_in_seconds
 
 
 class SequencePlayer(Thread):
