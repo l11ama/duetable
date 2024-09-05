@@ -19,6 +19,7 @@ python-osc = "^1.8.3"
 torch = "^2.4.0"
 torchaudio = "^2.4.0"
 transformers = "^4.44.2"
+einops = "^0.8.0"
 
 
 [tool.poetry.group.dev.dependencies]

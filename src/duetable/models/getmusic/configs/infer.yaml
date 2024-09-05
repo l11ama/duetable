@@ -1,0 +1,14 @@
+# paths
+log_dir: 'logs/getmusic'
+save_dir: 'logs/getmusic'
+checkpoint_path: 'logs/getmusic/pretrained/checkpoint.pth'
+
+# inference
+tensorflow: False
+name: 'inference_cache'
+do_sample: True
+amp: False
+no_ema: True
+chord_from_single: False
+decode_chord: False
+skip_step: 0
