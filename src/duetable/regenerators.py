@@ -3,7 +3,7 @@ from typing import List
 from duetable.abc_utils import generate_abc_from_sequence, generate_sequence_from_abc
 from duetable.interfaces import MidiBufferRegenerator
 from duetable.melody_markov_chain import MarkovRegenerator
-from duetable.models.mupt.mupt_connector import HttpMuptConnector, MuptConnector
+from duetable.models.mupt.connector import HttpMuptConnector, MuptConnector
 from duetable.settings import DuetableSettings
 
 
