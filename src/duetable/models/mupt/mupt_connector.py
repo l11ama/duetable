@@ -17,7 +17,7 @@ class BaseMuptConnector:
             n_samples: int = 5,
             model: str = "small"
     ) -> Optional[str]:
-        pass
+        raise NotImplementedError()
 
 
 class MuptConnector(BaseMuptConnector):
@@ -28,8 +28,8 @@ class MuptConnector(BaseMuptConnector):
     }
 
     def __init__(self):
-        if torch.cuda.is_available():
-            self.device = torch.device('cuda') or torch.device('cpu')
+        self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
         self.tokenizer = AutoTokenizer.from_pretrained("m-a-p/MuPT-v1-8192-190M", trust_remote_code=True, use_fast=False)
         self.model = AutoModelForCausalLM.from_pretrained("m-a-p/MuPT-v1-8192-190M").eval().half().to(self.device)
 

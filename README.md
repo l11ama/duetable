@@ -73,6 +73,7 @@ Multiple parameters can be provided on runtime to configure the system. These ar
 * `bpm` - tempo for the regenerated melody
 * `sleep_with_note` - specify if the midi player has to sleep with the note duration or time calculated from tempo and meter
 * `regenerator` - specify method for regenerating recorded midi notes, possible values are:
+  * `MuptRegenerator` - regenerates melody using MUPT (https://arxiv.org/abs/2404.06393)
   * `HttpMuptRegenerator` - regenerates melody using MUPT API
   * `MuptWithMarkovChainRegenerator` - first regeneration is executed with MUTP API and all other iterations with MarkovChain
   * `MarkovChainRegenerator` - regenerates melody using MarkovChain
